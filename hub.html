@@ -16,6 +16,6 @@ const I={"정상":"🟢","확인됨":"🟢","지연":"🟡","멈춤":"🔴","일
 const e=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 fetch('https://raw.githubusercontent.com/'+rp+'/data/hub.json?_='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(s=>{
 document.getElementById('u').textContent='갱신 '+s.ts+' (KST) · 금액 없이 상태·비율만 표시';
-document.getElementById('l').innerHTML=s.bots.map(b=>`<div class="card"><div class="row"><div><span class="nm">${e(b.name)}</span><span class="md">${e(b.mode||'')}</span></div><div class="st">${I[b.state]||'⚪'} ${e(b.state)}</div></div><div class="hl">${e(b.headline||'')}</div></div>`).join('');
+document.getElementById('l').innerHTML=s.bots.map(b=>`<${b.url?'a href="'+e(b.url)+'"':'div'} class="card" ${b.url?'style="display:block;color:inherit;text-decoration:none"':''}><div class="row"><div><span class="nm">${e(b.name)}</span><span class="md">${e(b.mode||'')}</span></div><div class="st">${I[b.state]||'⚪'} ${e(b.state)}</div></div><div class="hl">${e(b.headline||'')}${b.url?' · 자세히 ›':''}</div></${b.url?'a':'div'}>`).join('');
 }).catch(()=>{document.getElementById('u').textContent='불러오지 못했습니다'});
 </script></body></html>
