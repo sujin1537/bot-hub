@@ -13,7 +13,13 @@ table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:6px 3px;t
 .rv{border-top:1px dashed var(--ln);padding:8px 0;font-size:13px}.rv:first-child{border-top:0}pre{white-space:pre-wrap;margin:4px 0 0;font:inherit;color:var(--mut)}
 svg{width:100%;height:auto;display:block}.lg{display:flex;gap:14px;font-size:12px;color:var(--mut);margin-top:4px}.lg i{display:inline-block;width:10px;height:3px;vertical-align:middle;margin-right:4px}
 a{color:var(--ac)}
+.trd{cursor:pointer}.trd:active{filter:brightness(.96)}.chev{color:var(--mut)}
+#cw{position:relative}#tip{position:absolute;display:none;pointer-events:none;background:var(--card);border:1px solid var(--ln);border-radius:8px;padding:4px 8px;font-size:12px;box-shadow:0 2px 8px rgba(0,0,0,.15);white-space:nowrap}
+#mdl{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9;padding:12px;overflow:auto}
+.note{font-size:13px;line-height:1.6;margin-top:8px}
+:root{--sma:#f59e0b}
 </style></head><body><main><h1>비트코인 추세 현황판</h1><div class="upd" id="u">불러오는 중…</div><div id="root"></div>
+<div id="mdl"><div class="card" style="max-width:640px;margin:24px auto"><h2 id="mt" style="margin:0 0 4px"></h2><div id="msub" class="mut"></div><div id="msvg"></div><div class="note" id="mnote"></div><div style="text-align:right;margin-top:8px"><button id="mclose" style="border:1px solid var(--ln);background:var(--tile);color:var(--tx);border-radius:8px;padding:6px 14px;font:inherit;cursor:pointer">닫기</button></div></div></div>
 <script>
 const rp=location.hostname.split('.')[0]+'/'+location.pathname.split('/')[1];
 const e=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
@@ -31,6 +37,65 @@ function chart(q){
   <text x="${P}" y="${H-3}" font-size="11" fill="var(--mut)">${e(q.d[0])}</text><text x="${W-8}" y="${H-3}" font-size="11" text-anchor="end" fill="var(--mut)">${e(q.d[n-1])}</text></svg>
   <div class="lg"><span><i style="background:var(--ac)"></i>내 전략</span><span><i style="background:var(--mut)"></i>그냥 보유</span></div>`;
 }
+
+const $=id=>document.getElementById(id);
+const col=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const kfmt=v=>v==null?'-':(v>=1e8?(v/1e8).toFixed(2)+'억':Math.round(v/1e4).toLocaleString('ko-KR')+'만');
+function lineChart(P,o){ // P:[[date,close,sma]], o:{W,H,marks:[{i,v,lab,cl,up}],hl:{v,lab}}
+  const W=o.W,H=o.H,L=44,R=o.R||12,T=o.T||26,B=22;
+  const vals=P.flatMap(p=>[p[1],p[2]]).concat(o.hl?[o.hl.v]:[]).concat((o.marks||[]).map(m=>m.v)).filter(v=>v!=null);
+  let lo=Math.min(...vals),hi=Math.max(...vals);const pd=(hi-lo)*.08||1;lo-=pd;hi+=pd;
+  const X=i=>L+i/(P.length-1)*(W-L-R),Y=v=>T+(1-(v-lo)/(hi-lo))*(H-T-B);
+  const path=k=>{let d='',on=0;P.forEach((p,i)=>{const v=p[k];if(v==null){on=0;return}d+=(on?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1);on=1});return d};
+  let g='';
+  if(o.shade!=null){const a=o.shade[0],b=o.shade[1];g+=`<rect x="${X(a)}" y="${T}" width="${Math.max(1,X(b)-X(a))}" height="${H-T-B}" fill="${col('--up')}" opacity=".08"/>`}
+  for(let k=0;k<=4;k++){const v=lo+(hi-lo)*k/4;g+=`<line x1="${L}" x2="${W-R}" y1="${Y(v)}" y2="${Y(v)}" stroke="${col('--ln')}"/><text x="${L-6}" y="${Y(v)+4}" text-anchor="end" font-size="11" fill="${col('--mut')}">${kfmt(v)}</text>`}
+  [0,.5,1].forEach((r,j)=>{const i=Math.round(r*(P.length-1));g+=`<text x="${X(i)}" y="${H-5}" text-anchor="${j==0?'start':j==2?'end':'middle'}" font-size="11" fill="${col('--mut')}">${P[i][0].slice(5)}</text>`});
+  g+=`<path d="${path(2)}" fill="none" stroke="${col('--sma')}" stroke-width="1.8" stroke-dasharray="6 4"/>`;
+  if(o.hl){g+=`<line x1="${L}" x2="${W-R}" y1="${Y(o.hl.v)}" y2="${Y(o.hl.v)}" stroke="${col('--up')}" stroke-width="1.3"/><text x="${W-R-2}" y="${Y(o.hl.v)-4}" text-anchor="end" font-size="11" font-weight="600" fill="${col('--up')}">${o.hl.lab}</text>`}
+  g+=`<path d="${path(1)}" fill="none" stroke="${col('--tx')}" stroke-width="2" stroke-linejoin="round"/>`;
+  (o.marks||[]).forEach(m=>{const x=X(m.i),y=Y(m.v);
+    g+=`<circle cx="${x}" cy="${y}" r="5.5" fill="${col(m.cl)}" stroke="${col('--card')}" stroke-width="2"/><text x="${Math.min(W-R-40,Math.max(L+40,x))}" y="${y+(m.up?22:-12)}" text-anchor="middle" font-size="12" font-weight="700" fill="${col(m.cl)}">${m.lab}</text>`});
+  const last=P.length-1;g+=`<circle cx="${X(last)}" cy="${Y(P[last][1])}" r="3.5" fill="${col('--tx')}"/>`;
+  g+=`<g id="xh" style="display:none"><line id="xl" y1="${T}" y2="${H-B}" stroke="${col('--mut')}"/><circle id="xc" r="4.5" fill="${col('--tx')}" stroke="${col('--card')}" stroke-width="2"/></g><rect id="hit" x="${L}" y="${T}" width="${W-L-R}" height="${H-T-B}" fill="transparent"/>`;
+  return {svg:`<svg id="sv" viewBox="0 0 ${W} ${H}" width="100%">${g}</svg>`,X,Y,L,R,W,H};
+}
+function idxOfDate(P,d){let k=-1;for(let i=0;i<P.length;i++){if(P[i][0]<=d)k=i;else break}return k}
+function priceChart(s){
+  const c=s.chart;if(!c||!c.series||c.series.length<2){$('pc').innerHTML='<div class="mut">차트 데이터를 불러오지 못했어요</div>';return}
+  const P=c.series,W=Math.min($('cw').clientWidth||600,640),H=Math.round(W*.6),marks=[];
+  (s.trades||[]).forEach(t=>{const i=idxOfDate(P,t.d);if(i>=0)marks.push({i,v:t.price,lab:t.side==='buy'?'진입':'청산',cl:t.side==='buy'?'--up':'--dn',up:t.side==='buy'})});
+  const r=lineChart(P,{W,H,marks,hl:s.my_entry?{v:s.my_entry,lab:'내 진입 '+kfmt(s.my_entry)}:null});
+  $('pc').innerHTML=r.svg;
+  $('cs24').textContent=`최근 ${P.length}일`;
+  if(s.my_entry)$('mylg').innerHTML=`<span><i style="background:var(--up)"></i>내 진입 ${won(s.my_entry)}</span>`;
+  const sv=$('sv'),tip=$('tip'),hit=$('hit'),xh=$('xh'),last=P.length-1;
+  const mv=ev=>{const b=sv.getBoundingClientRect(),px=(ev.clientX-b.left)*(r.W/b.width),i=Math.max(0,Math.min(last,Math.round((px-r.L)/(r.W-r.L-r.R)*last))),p=P[i];
+    xh.style.display='';$('xl').setAttribute('x1',r.X(i));$('xl').setAttribute('x2',r.X(i));$('xc').setAttribute('cx',r.X(i));$('xc').setAttribute('cy',r.Y(p[1]));
+    tip.innerHTML=`<b>${won(p[1])}</b> <span style="color:var(--mut)">${p[0].slice(5)}</span><br><span style="color:var(--mut)">${c.n}일선 ${p[2]==null?'-':won(p[2])}</span>`;tip.style.display='block';
+    const tw=tip.offsetWidth,x=(r.X(i)/r.W)*b.width;tip.style.left=Math.max(0,Math.min(b.width-tw,x-tw/2))+'px';tip.style.top='-6px'};
+  hit.addEventListener('pointermove',mv);hit.addEventListener('pointerdown',mv);hit.addEventListener('pointerleave',()=>{xh.style.display='none';tip.style.display='none'});
+}
+const loadSnap=id=>fetch('https://raw.githubusercontent.com/'+rp+'/data/btc_trades/'+id+'.json?_='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw 0;return r.json()})
+  .catch(()=>fetch('https://api.github.com/repos/'+rp+'/contents/btc_trades/'+id+'.json?ref=data',{headers:{Accept:'application/vnd.github.raw'},cache:'no-store'}).then(r=>{if(!r.ok)throw 0;return r.json()}));
+function showSnap(id){
+  const m=$('mdl');m.style.display='block';$('mt').textContent='불러오는 중…';$('msub').textContent='';$('msvg').innerHTML='';$('mnote').style.display='none';
+  loadSnap(id).then(d=>{
+    const P=d.series,W=Math.max(300,Math.min(document.documentElement.clientWidth-64,600)),H=Math.round(W*.62);
+    const marks=[{i:d.ei,v:d.pin,lab:'진입 '+kfmt(d.pin),cl:'--up',up:true}];
+    if(d.xi!=null)marks.push({i:d.xi,v:d.pout,lab:'청산 '+kfmt(d.pout),cl:'--dn',up:false});
+    $('mt').textContent=d.xi!=null?`${d.in} → ${d.out}`:`${d.in} 매수`;
+    $('msub').textContent=d.xi!=null?`${d.held_d<2?(d.held_d*24).toFixed(1)+'시간':d.held_d.toFixed(1)+'일'} 보유 · ${kfmt(d.pin)} → ${kfmt(d.pout)} · 수익률 ${pc(d.ret,1)}`:`진입가 ${kfmt(d.pin)} · 보유 중`;
+    $('msvg').innerHTML=lineChart(P,{W,H,marks,shade:d.xi!=null?[d.ei,d.xi]:null,T:34}).svg;
+    const L=[],e0=P[d.ei],x0=d.xi!=null?P[d.xi]:null;
+    if(e0&&e0[2]!=null)L.push(`진입: 종가가 ${d.n}일선보다 <b>${((e0[1]/e0[2]-1)*100).toFixed(1)}%</b> ${e0[1]>=e0[2]?'위':'아래'}였어요`);
+    if(x0&&x0[2]!=null)L.push(`청산: 종가가 ${d.n}일선보다 <b>${Math.abs((x0[1]/x0[2]-1)*100).toFixed(1)}%</b> ${x0[1]>=x0[2]?'위':'아래'}에서 신호가 났어요`);
+    const seg=P.slice(d.ei,(d.xi==null?P.length-1:d.xi)+1).map(p=>p[1]),mn=Math.min(...seg),mx=Math.max(...seg);
+    L.push(`보유 구간 종가 최저 ${kfmt(mn)} · 최고 ${kfmt(mx)}`+(d.xi!=null?` → 진입은 최저보다 +${((d.pin/mn-1)*100).toFixed(1)}%, 청산은 최고보다 −${((1-d.pout/mx)*100).toFixed(1)}%`:''));
+    $('mnote').style.display='';$('mnote').innerHTML=L.join('<br>');
+  }).catch(()=>{$('mt').textContent='아직 준비 중입니다';$('msub').textContent='거래 직후에는 차트를 올리는 데 몇 분 걸릴 수 있어요. 잠시 뒤 다시 눌러 보세요.'});
+}
+document.addEventListener('click',ev=>{const r=ev.target.closest&&ev.target.closest('.trd[data-id]');if(r){showSnap(r.dataset.id);return}if(ev.target.id==='mclose'||ev.target.id==='mdl')$('mdl').style.display='none'});
 function draw(s){
   document.getElementById('u').textContent=`${s.mode} 매매 · 갱신 ${s.updated}`+(s.running?'':' · 봇이 꺼져 있어요');
   const sg=s.signals||[];
@@ -41,13 +106,17 @@ function draw(s){
    <div class="mut" style="margin-top:4px">전략: ${e(s.strategy)} · 마지막 판단일 ${e(s.last_day||'-')} · ${s.paused?'⏸ 일시정지':'매일 오전 9시(한국)에 판단'}</div>
    <div class="kv"><div>원금 대비<b class="${cl(s.ret_pct)}">${pc(s.ret_pct,2)}</b></div><div>같은 기간 그냥 보유<b class="${cl(s.bh_pct)}">${pc(s.bh_pct,2)}</b></div>
    <div>지금 비트코인 비중<b>${s.weight_pct==null?'-':s.weight_pct+'%'}</b></div><div>최대 낙폭 (자산)<b>${pc(s.mdd_pct,1)}</b></div></div></div>
+   <h2>비트코인 가격과 진입선 <span class="pill" id="cs24"></span></h2><div class="card"><div id="cw"><div id="tip"></div><div id="pc"></div></div>
+   <div class="lg"><span><i style="background:var(--tx)"></i>종가</span><span><i style="background:var(--sma)"></i>${e(s.strategy_n||'')}일선 (진입·청산선)</span><span id="mylg"></span></div>
+   <div class="mut" style="margin-top:6px">종가가 선 위로 올라오면 매수(진입), 아래로 내려가면 매도(청산)합니다. 선 위에 있는 동안은 계속 보유합니다.</div></div>
    <h2>자산 추이 (원금 = 0%)</h2><div class="card">${chart(s.equity)}</div>
    <h2>매매 이력 <span class="pill">매매 ${(s.trades||[]).length}건</span><span class="pill">매수→매도 완료 ${trip}회</span></h2>
-   <div class="card">`+(trades.length?`<table><tr><th>날짜(한국)</th><th>구분</th><th>체결가</th><th>결과</th></tr>`+trades.map(t=>`<tr><td>${e(t.ts)}</td><td class="${t.side==='buy'?'up':'dn'}">${t.side==='buy'?'매수':'매도'}</td><td>${won(t.price)}</td><td>${t.pnl==null?'<span class="mut">보유 중</span>':'<span class="'+cl(t.pnl)+'">'+pc(t.pnl,1)+'</span>'}</td></tr>`+(t.reason?`<tr><td colspan="4" class="mut" style="border:0;padding-top:0">${e(t.reason)}</td></tr>`:'')).join('')+`</table><div class="mut" style="margin-top:6px">결과는 가격 기준(수수료 제외)입니다. 매수는 '보유 중'으로 표시되고, 매도가 나오면 그 매수 대비 수익이 매도 줄에 찍힙니다.</div>`:'<div class="mut">아직 매매가 없어요</div>')+`</div>
+   <div class="card">`+(trades.length?`<table><tr><th>날짜(한국)</th><th>구분</th><th>체결가</th><th>결과</th></tr>`+trades.map(t=>`<tr class="trd" data-id="${e(t.id)}"><td>${e(t.ts)}</td><td class="${t.side==='buy'?'up':'dn'}">${t.side==='buy'?'매수':'매도'}</td><td>${won(t.price)}</td><td>${t.pnl==null?'<span class="mut">보유 중</span>':'<span class="'+cl(t.pnl)+'">'+pc(t.pnl,1)+'</span>'} <span class="chev">›</span></td></tr>`+(t.reason?`<tr class="trd" data-id="${e(t.id)}"><td colspan="4" class="mut" style="border:0;padding-top:0">${e(t.reason)} · 눌러서 차트 보기</td></tr>`:'')).join('')+`</table><div class="mut" style="margin-top:6px">결과는 가격 기준(수수료 제외)입니다. 매수는 '보유 중'으로 표시되고, 매도가 나오면 그 매수 대비 수익이 매도 줄에 찍힙니다. 줄을 누르면 그때의 차트를 볼 수 있어요.</div>`:'<div class="mut">아직 매매가 없어요</div>')+`</div>
    <h2>이동평균선 신호 (${e(s.asof||'')} 기준)</h2><div class="card">`+(sg.length?`<table><tr><th>기준</th><th>선 가격</th><th>현재가와 차이</th><th>판단</th></tr>`+sg.map(x=>`<tr${String(x.n)===String(s.strategy_n)?' style="font-weight:700"':''}><td>${x.n}일선${String(x.n)===String(s.strategy_n)?' ✔ 사용 중':''}</td><td>${won(x.ma)}</td><td class="${cl(x.gap)}">${pc(x.gap,1)}</td><td>${x.hold?'위 → 보유':'아래 → 현금'}</td></tr>`).join('')+`</table>`:'<div class="mut">신호를 불러오지 못했어요</div>')+`</div>
    <h2>월간 전략 점검 기록</h2><div class="card">`+((s.reviews||[]).length?s.reviews.map(r=>`<div class="rv"><b>${e(r.ts)}</b> · ${e(r.reason||'')}<pre>${e(r.detail||'')}</pre></div>`).join(''):'<div class="mut">아직 없음</div>')+`</div>
    <h2>이 봇의 규칙</h2><div class="card mut">매일 오전 9시(한국)에 일봉이 완성되면 종가가 ${e(s.strategy)}선 위면 비트코인 보유, 아래면 현금으로 둡니다. 매달 1일 지난 1년으로 점검해 더 나은 설정이 있으면 제안하고, 승인해야 바뀝니다. 자산이 고점 대비 -35%면 매수를 멈춥니다. 금액·수량은 이 페이지에 올리지 않고 %와 가격만 보여 줍니다. 투자 권유가 아닙니다.</div>
    <div class="mut" style="margin-top:12px"><a href="../">← 투자 허브로</a></div>`;
+  priceChart(s);
 }
 fetch('https://raw.githubusercontent.com/'+rp+'/data/btc.json?_='+Date.now(),{cache:'no-store'}).then(r=>{if(!r.ok)throw 0;return r.json()}).then(draw)
  .catch(()=>{document.getElementById('u').textContent='아직 데이터가 올라오지 않았어요 (허브가 켜져 있으면 5분 안에 올라옵니다)'});
