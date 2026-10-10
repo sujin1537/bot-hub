@@ -6,6 +6,11 @@
 main{max-width:640px;margin:0 auto;padding:18px 16px 56px}h1{font-size:17px;margin:0 0 2px}.upd{color:var(--mut);font-size:12px;margin-bottom:12px}
 .tabs{display:flex;gap:6px;margin-bottom:12px}.tabs button{flex:1;padding:9px 0;border:1px solid var(--ln);background:var(--card);color:var(--tx);border-radius:10px;font:inherit;font-weight:650;cursor:pointer}
 .tabs button.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.sub{display:flex;gap:6px;margin:0 0 4px}.sub button{padding:6px 14px;border:1px solid var(--ln);background:var(--card);color:var(--mut);border-radius:99px;font:inherit;font-size:13px;font-weight:650;cursor:pointer}.sub button.on{background:var(--tx);color:var(--bg);border-color:var(--tx)}
+.heat{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}.heat div{border-radius:8px;padding:6px 4px;text-align:center;font-size:11px;color:#fff;line-height:1.25}.heat b{display:block;font-size:13px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.two .card{margin:0}.li{display:flex;justify-content:space-between;font-size:13px;padding:3px 0}.li span:last-child{font-weight:650}
+.upc{color:var(--up)}.dnc{color:var(--dn)}table.fl{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px}table.fl th,table.fl td{padding:4px 2px;text-align:right}table.fl th:first-child,table.fl td:first-child{text-align:left}table.fl th{color:var(--mut);font-weight:600}table.fl tr.sum td{border-top:1px solid var(--ln);font-weight:650}
+.bar{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:6px 0}.bar i{display:block}
 .card{background:var(--card);border:1px solid var(--ln);border-radius:12px;padding:12px 14px;margin-bottom:10px}
 .row{display:flex;justify-content:space-between;align-items:center;gap:8px}.nm{font-weight:650}.md{color:var(--mut);font-size:12px;margin-left:6px}
 .st{font-size:13px;white-space:nowrap}.hl{color:var(--mut);font-size:13px;margin-top:4px}
@@ -16,14 +21,38 @@ details{border-top:1px solid var(--ln);padding:6px 0}details:first-of-type{borde
 a.card{display:block;color:inherit;text-decoration:none}.tag{display:inline-block;padding:1px 8px;border-radius:99px;background:var(--tile);font-size:12px;margin:0 4px 4px 0}
 </style></head><body><main><h1>봇 총괄</h1><div class="upd" id="u">불러오는 중…</div>
 <div class="tabs"><button id="t1" class="on" onclick="tab(1)">자동매매</button><button id="t2" onclick="tab(2)">전략분석</button></div>
-<div id="p1"></div><div id="p2" hidden></div>
+<div id="p1"></div><div id="p2" hidden><div class="sub"><button id="s1" class="on" onclick="sub(1)">🇺🇸 미국</button><button id="s2" onclick="sub(2)">🇰🇷 한국</button></div><div id="q1"></div><div id="q2" hidden></div></div>
 <script>
 const rp=location.hostname.split('.')[0]+'/'+location.pathname.split('/')[1];
 const I={"정상":"🟢","확인됨":"🟢","지연":"🟡","멈춤":"🔴","일시정지":"⏸","미가동":"⚪","오래됨":"🟡","읽기 실패":"🔴"};
 const e=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 function tab(n){for(const i of [1,2]){document.getElementById('p'+i).hidden=i!==n;document.getElementById('t'+i).className=i===n?'on':'';}try{location.hash='t'+n}catch(_){}}
+function sub(n){for(const i of [1,2]){document.getElementById('q'+i).hidden=i!==n;document.getElementById('s'+i).className=i===n?'on':'';}}
 const card=b=>`<${b.url?'a href="'+e(b.url)+'"':'div'} class="card"><div class="row"><div><span class="nm">${e(b.name)}</span><span class="md">${e(b.mode||'')}</span></div><div class="st">${I[b.state]||'⚪'} ${e(b.state)}</div></div><div class="hl">${e(b.headline||'')}${b.url?' · 자세히 ›':''}</div></${b.url?'a':'div'}>`;
 const kv=(k,v)=>`<div>${k}<b>${v==null?'-':v}</b></div>`;
+
+const pc=v=>(v>0?'+':'')+v+'%';const cl=v=>v>0?'upc':v<0?'dnc':'';
+const tone=v=>{const a=Math.min(Math.abs(v)/4,1);const base=v>=0?'217,45,32':'29,111,232';return `rgba(${base},${(0.25+0.75*a).toFixed(2)})`};
+function usscan(a){if(!a)return '';const G=a.grade,tot=a.n;const col={"강한 매수":'#0e9f6e',"매수":'#7bc7a4',"중립":'#b7bdc8',"매도":'#f0a39b',"강한 매도":'#d92d20'};
+const li=l=>l.map(x=>`<div class="li"><span>${e(x.sym)} <span class="md">${e(x.name)}</span></span><span class="${cl(x.d1)}">${pc(x.d1)}</span></div>`).join('')||'<div class="nt">없음</div>';
+const rs=l=>l.map(x=>`<div class="li"><span>${e(x.sym)} <span class="md">${e(x.name)}</span></span><span>RSI ${x.rsi}</span></div>`).join('')||'<div class="nt">없음</div>';
+return `<h2>미국 시장 개요 <span class="md">${e(a.asof)} 종가 · ${a.n.toLocaleString()}종목 스캔</span></h2>
+<div class="card"><div class="kv">${kv('상승 종목 비율',a.up_pct+'%')}${kv('평균 RSI',a.avg_rsi)}${kv('강한 매수 등급',G['강한 매수']+'개')}</div>
+<div class="bar">${Object.keys(G).map(k=>`<i style="width:${G[k]*100/tot}%;background:${col[k]}"></i>`).join('')}</div>
+<div class="nt">${Object.keys(G).map(k=>`<span style="color:${col[k]}">●</span> ${k} ${G[k]}`).join(' · ')}</div></div>
+<h2>시총 상위 히트맵 <span class="md">색 = 오늘 등락률 (빨강 상승 · 파랑 하락)</span></h2>
+<div class="card"><div class="heat">${a.heat.map(x=>`<div style="background:${tone(x.d1)}"><b>${e(x.sym)}</b>${pc(x.d1)}</div>`).join('')}</div></div>
+<h2>오늘 많이 움직인 종목 <span class="md">시총 상위 300 중</span></h2>
+<div class="two"><div class="card"><div class="nm" style="font-size:13px">상승 TOP</div>${li(a.up)}</div><div class="card"><div class="nm" style="font-size:13px">하락 TOP</div>${li(a.down)}</div></div>
+<h2>RSI 과열 · 과매도 <span class="md">시총 상위 300 중</span></h2>
+<div class="two"><div class="card"><div class="nm" style="font-size:13px">과매도 (RSI&lt;30)</div>${rs(a.oversold)}</div><div class="card"><div class="nm" style="font-size:13px">과열 (RSI&gt;70)</div>${rs(a.overbought)}</div></div>
+`+(a.signals&&a.signals.length?`<h2>오늘 나온 매수 신호 <span class="md">시총 상위 150 중</span></h2><div class="card">${a.signals.map(x=>`<div class="it"><span class="sym">${e(x.sym)}</span> <span class="px">${e(x.name)}</span><div class="nt">${x.hits.map(e).join(' · ')}</div></div>`).join('')}</div>`:'');}
+function krflow(a){if(!a)return '';
+const tb=(mk,m)=>{const r=m.days;return `<div class="card"><div class="nm">${mk} 투자자별 순매수 <span class="md">억 원 · 최근 ${r.length}거래일</span></div><table class="fl"><tr><th></th><th>개인</th><th>외국인</th><th>기관</th></tr>`+
+r.map(d=>`<tr><td>${e(d.date)}</td><td class="${cl(d.ind)}">${d.ind.toLocaleString()}</td><td class="${cl(d.frg)}">${d.frg.toLocaleString()}</td><td class="${cl(d.ins)}">${d.ins.toLocaleString()}</td></tr>`).join('')+
+`<tr class="sum"><td>5일 합</td><td class="${cl(m.sum5.ind)}">${m.sum5.ind.toLocaleString()}</td><td class="${cl(m.sum5.frg)}">${m.sum5.frg.toLocaleString()}</td><td class="${cl(m.sum5.ins)}">${m.sum5.ins.toLocaleString()}</td></tr>`+
+`<tr class="sum"><td>20일 합</td><td class="${cl(m.sum20.ind)}">${m.sum20.ind.toLocaleString()}</td><td class="${cl(m.sum20.frg)}">${m.sum20.frg.toLocaleString()}</td><td class="${cl(m.sum20.ins)}">${m.sum20.ins.toLocaleString()}</td></tr></table></div>`};
+return `<h2>코스피·코스닥 수급</h2>`+Object.keys(a).map(k=>tb(k,a[k])).join('');}
 function tsla(a,b){if(!a)return '';const L=a.lines||{};const dir=(a.close&&L.hi20)?((a.close/L.hi20-1)*100).toFixed(1)+'%':'-';
 return `<h2>테슬라</h2>`+(b?card(b):'')+`<div class="card"><div class="nm">오늘의 판단 <span class="md">${e(a.day)} 종가 기준</span></div><div class="hl" style="font-size:14px;color:var(--tx)">${e(a.why)}</div>
 <div class="kv">${kv('종가','$'+a.close)}${kv('20일선','$'+L.m20)}${kv('60일선','$'+L.m60)}${kv('200일선','$'+L.m200)}${kv('돌파선(20일 최고)','$'+L.hi20)}${kv('손절선(10일 최저)','$'+L.lo10)}</div>
@@ -39,7 +68,8 @@ fetch('https://raw.githubusercontent.com/'+rp+'/data/hub.json?_='+Date.now(),{ca
 document.getElementById('u').textContent='갱신 '+s.ts+' (KST) · 금액·수량·보유 종목은 공개하지 않음';
 const B=Object.fromEntries(s.bots.map(b=>[b.id,b]));const A=s.analysis||{};
 document.getElementById('p1').innerHTML=['kimp','btc'].filter(k=>B[k]).map(k=>{const b=B[k];const t=b.ret_pct!=null?`<div class="kv" style="margin:-4px 0 10px">${kv('원금 대비',(b.ret_pct>0?'+':'')+b.ret_pct+'%')}${kv('완료 거래',b.trades==null?'-':b.trades+'회')}${kv('포지션',e(b.position||'-'))}</div>`:'';return card(b)+t}).join('');
-document.getElementById('p2').innerHTML=tsla(A.tsla,B.tsla)+us(A.us)+kr(A.kr)+(B.stock?'<h2>분석 봇 상태</h2>'+card(B.stock):'');
+document.getElementById('q1').innerHTML=usscan(A.usscan)+us(A.us)+tsla(A.tsla,B.tsla);
+document.getElementById('q2').innerHTML=krflow(A.krflow)+kr(A.kr)+(B.stock?'<h2>분석 봇 상태</h2>'+card(B.stock):'');
 if(location.hash==='#t2')tab(2);
 }).catch(()=>{document.getElementById('u').textContent='불러오지 못했습니다'});
 </script></main></body></html>
