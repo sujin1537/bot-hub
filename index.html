@@ -47,8 +47,31 @@ function usrec(a){if(!a||a.error)return '<div class="card nt">자료 없음</div
 return `<h2>AI·반도체 차트 <span class="md">${e(a.asof)} 기준</span></h2>`+(a.hot?`<div class="card"><div class="hl">📌 돈이 몰리는 곳: ${e(a.hot)}</div><div class="hl">📌 힘이 빠진 곳: ${e(a.cold)}</div></div>`:'')+
 `<div class="card">${a.groups.map((g,i)=>`<details${i===0?' open':''}><summary>${e(g.label)} <span class="md">${g.items.length}개</span></summary>${g.items.map(x=>`<div class="it"><span class="sym">${e(x.sym)}</span> <span>${e(x.name)}</span><span class="px">${e(x.price)}</span>${x.note.map(n=>`<div class="nt">${e(n)}</div>`).join('')}</div>`).join('')}</details>`).join('')}</div>`+
 (a.watch&&a.watch.length?`<h2>내 관심 종목</h2><div class="card">${a.watch.map(x=>`<div class="it"><span class="sym">${e(x.sym)}</span> <span>${e(x.label)}</span></div>`).join('')}</div>`:'');}
-function tsla(a){if(!a)return '<div class="card nt">자료 없음</div>';const L=a.lines||{};const dir=(a.close&&L.hi20)?((a.close/L.hi20-1)*100).toFixed(1)+'%':'-';
-return `<div class="card"><div class="nm">오늘의 판단 <span class="md">${e(a.day)} 종가 기준</span></div><div class="hl" style="font-size:14px;color:var(--tx)">${e(a.why)}</div>
+
+const err=a=>a&&a.error?`<div class="card nt">불러오지 못했어요 (${e(a.error)})</div>`:null;
+function spark(a,L){const W=340,H=96,vs=a.concat(L.map(l=>l.v)),mn=Math.min(...vs),mx=Math.max(...vs),y=v=>H-8-(v-mn)/((mx-mn)||1)*(H-16),x=i=>i*(W/(a.length-1));
+return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block"><polyline fill="none" stroke="var(--ac)" stroke-width="1.8" points="${a.map((v,i)=>x(i).toFixed(1)+','+y(v).toFixed(1)).join(' ')}"/>`+
+L.map(l=>`<line x1="0" x2="${W}" y1="${y(l.v)}" y2="${y(l.v)}" stroke="${l.c}" stroke-width="1" stroke-dasharray="4 3"/><text x="${W-2}" y="${y(l.v)-3}" text-anchor="end" font-size="9" fill="${l.c}">${l.t} ${l.v}%</text>`).join('')+`</svg>`;}
+function coinmarket(a){const x=err(a);if(x)return x;const b=a.btc||{};
+const li=l=>l.map(r=>`<div class="li"><span>${e(r.sym)} <span class="md">${e(r.name)}</span></span><span class="${cl(r.chg)}">${pc(r.chg)}</span></div>`).join('');
+const tr=Object.keys(a.trend||{}).map(n=>`<tr><td>${n}일선</td><td>${Math.round(a.trend[n].ma/1e4).toLocaleString()}만</td><td class="${cl(a.trend[n].gap)}">${pc(a.trend[n].gap)}</td><td>${a.trend[n].gap>0?'위':'아래'}</td></tr>`).join('');
+return `<h2>비트코인 <span class="md">업비트 · 일봉 이동평균은 빗썸 기준</span></h2><div class="card"><div class="kv">${kv('현재가',b.px?Math.round(b.px/1e4).toLocaleString()+'만':'-')}${kv('24시간',b.chg==null?'-':pc(b.chg))}${kv('RSI(14일)',a.rsi==null?'-':a.rsi)}</div>
+<table class="fl"><tr><th>이동평균</th><th>값</th><th>현재가 대비</th><th></th></tr>${tr}</table></div>
+<h2>업비트 시장 <span class="md">원화 ${a.n}종목</span></h2><div class="card"><div class="kv">${kv('거래대금 상위 50 중 상승',a.up_pct+'%')}${kv('평균 등락',pc(a.avg_chg))}${kv('종목 수',a.n)}</div></div>
+<h2>24시간 거래대금 TOP10 <span class="md">억 원</span></h2><div class="card">${a.top_amt.map(r=>`<div class="li"><span>${e(r.sym)} <span class="md">${e(r.name)}</span></span><span>${r.amt.toLocaleString()} <span class="${cl(r.chg)}">${pc(r.chg)}</span></span></div>`).join('')}</div>
+<h2>많이 움직인 코인 <span class="md">거래대금 상위 50 중</span></h2><div class="two"><div class="card"><div class="nm" style="font-size:13px">상승 TOP</div>${li(a.up)}</div><div class="card"><div class="nm" style="font-size:13px">하락 TOP</div>${li(a.down)}</div></div>`;}
+function coinkimp(a){const x=err(a);if(x)return x;if(!a)return '<div class="card nt">자료 없음</div>';
+const msg=a.below_entry&&a.vol_ok?'🟢 진입 조건 충족 (기준선보다 낮고 변동성도 충분)':!a.vol_ok?`⚪ 변동성이 ${a.sd}%p로 진입 기준(0.33%p)보다 낮아 지금은 진입하지 않아요`:`⚪ 아직 진입선(${a.entry}%)까지 내려오지 않았어요`;
+return `<h2>김치 프리미엄 <span class="md">최근 24시간</span></h2><div class="card"><div class="nm" style="font-size:15px">${msg}</div>
+<div class="kv">${kv('현재 김프',a.cur+'%')}${kv('24시간 기준선',a.base+'%')}${kv('변동성(σ)',a.sd+'%p')}${kv('진입선',a.entry+'%')}${kv('청산선',a.exit+'%')}${kv('기준 대비',(a.gap_now>0?'+':'')+a.gap_now+'%p')}</div>
+<div style="margin-top:10px">${spark(a.spark,[{v:a.exit,c:'#e8590c',t:'청산'},{v:a.base,c:'#8a94a6',t:'기준'},{v:a.entry,c:'#0e9f6e',t:'진입'}])}</div>
+<div class="nt">진입 규칙: 기준선보다 0.25%p 낮고 변동성이 0.33%p 이상일 때 (김프봇 설정 기준)</div></div>`;}
+function coinstrat(a){const x=err(a);if(x)return x;if(!a)return '<div class="card nt">자료 없음</div>';
+return `<h2>이동평균 신호 <span class="md">${e(a.asof)} 일봉 종가 기준</span></h2><div class="card"><div class="nt">종가가 이동평균 위면 보유, 아래면 현금 (비트봇 규칙)</div><table class="fl"><tr><th>이동평균</th><th>값</th><th>현재가 대비</th><th>신호</th></tr>`+
+a.signals.map(r=>`<tr><td>${r.n}일</td><td>${Math.round(r.ma/1e4).toLocaleString()}만</td><td class="${cl(r.gap)}">${pc(r.gap)}</td><td>${r.hold?'🟢 보유':'⚪ 현금'}</td></tr>`).join('')+`</table></div>
+<h2>지난 1년 성과 순위 <span class="md">점수 높은 순 · 그냥 보유 ${pc(a.buyhold)}</span></h2><div class="card">`+a.ranked.map((r,i)=>`<div class="it"><span class="sym">${i+1}. ${e(r.name)}</span><div class="nt">수익 ${pc(r.ret)} · 낙폭 ${r.mdd}% · 매매 ${r.trades}회 · 점수 ${r.score}</div></div>`).join('')+`</div>`;}
+function tsla(a,url){const lk=url?`<a class="card" href="${e(url)}"><div class="row"><div class="nm">테슬라 플랜 상세 페이지</div><div class="st">열기 ›</div></div><div class="hl">3분할 매수 플랜과 근거 전체</div></a>`:'';if(!a)return lk+'<div class="card nt">자료 없음</div>';const L=a.lines||{};const dir=(a.close&&L.hi20)?((a.close/L.hi20-1)*100).toFixed(1)+'%':'-';
+return lk+`<div class="card"><div class="nm">오늘의 판단 <span class="md">${e(a.day)} 종가 기준</span></div><div class="hl" style="font-size:14px;color:var(--tx)">${e(a.why)}</div>
 <div class="kv">${kv('종가','$'+a.close)}${kv('20일선','$'+L.m20)}${kv('60일선','$'+L.m60)}${kv('200일선','$'+L.m200)}${kv('돌파선(20일 최고)','$'+L.hi20)}${kv('손절선(10일 최저)','$'+L.lo10)}</div>
 <div class="hl">종가가 돌파선보다 ${dir} · 변동성 ${a.vol_pct}% · 목표 배수 ${a.target}배</div>
 <div style="margin-top:8px">${(a.tranches||[]).map(t=>`<span class="tag">${e(t.date)} 매수회차 ${t.status==='wait'?'대기':e(t.status)}</span>`).join('')}</div></div>`;}
@@ -64,9 +87,9 @@ return `<div class="card"><div class="nm">관심 종목 등급</div>${a.rating.m
 fetch('https://raw.githubusercontent.com/'+rp+'/data/hub.json?_='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(s=>{
 document.getElementById('u').textContent='갱신 '+s.ts+' (KST) · 금액·수량·보유 종목은 공개하지 않음';
 const B=Object.fromEntries(s.bots.map(b=>[b.id,b]));const A=s.analysis||{};
-const analysis=tabs([['🇺🇸 미국',tabs([['시장',usmarket(A.usscan)],['추천',usrec(A.us)],['테슬라',tsla(A.tsla)]],'ul')],['🇰🇷 한국',tabs([['수급',krflow(A.krflow)],['종목',krstock(A.kr)]],'ul')]],'sub');
-const auto=['kimp','btc'].filter(k=>B[k]).map(k=>{const b=B[k];const t=b.ret_pct!=null?`<div class="kv" style="margin:-4px 0 10px">${kv('원금 대비',(b.ret_pct>0?'+':'')+b.ret_pct+'%')}${kv('완료 거래',b.trades==null?'-':b.trades+'회')}${kv('포지션',e(b.position||'-'))}</div>`:'';return card(b)+t}).join('')+
-'<h2>분석 봇 상태</h2>'+['tsla','stock'].filter(k=>B[k]).map(k=>card(B[k])).join('');
+const st=B.stock&&B.stock.age_min!=null?`<div class="nt" style="margin-top:6px">주식 분석 봇 마지막 갱신 ${B.stock.age_min}분 전</div>`:'';
+const analysis=tabs([['🇺🇸 미국',tabs([['시장',usmarket(A.usscan)],['추천',usrec(A.us)],['테슬라',tsla(A.tsla,B.tsla&&B.tsla.url)]],'ul')+st],['🇰🇷 한국',tabs([['수급',krflow(A.krflow)],['종목',krstock(A.kr)]],'ul')+st],['🪙 코인',tabs([['시장',coinmarket(A.coin&&A.coin.market)],['김프',coinkimp(A.coin&&A.coin.kimp)],['전략',coinstrat(A.coin&&A.coin.strategy)]],'ul')]],'sub');
+const auto=['kimp'].filter(k=>B[k]).map(k=>{const b=B[k];const t=b.ret_pct!=null?`<div class="kv" style="margin:-4px 0 10px">${kv('원금 대비',(b.ret_pct>0?'+':'')+b.ret_pct+'%')}${kv('완료 거래',b.trades==null?'-':b.trades+'회')}${kv('포지션',e(b.position||'-'))}</div>`:'';return card(b)+t}).join('');
 document.getElementById('root').innerHTML=tabs([['전략분석',analysis],['자동매매',auto]],'tabs');
 }).catch(()=>{document.getElementById('u').textContent='불러오지 못했습니다'});
 </script></main></body></html>
