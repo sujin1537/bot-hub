@@ -90,6 +90,8 @@ const B=Object.fromEntries(s.bots.map(b=>[b.id,b]));const A=s.analysis||{};
 const st=B.stock&&B.stock.age_min!=null?`<div class="nt" style="margin-top:6px">주식 분석 봇 마지막 갱신 ${B.stock.age_min}분 전</div>`:'';
 const analysis=tabs([['🇺🇸 미국',tabs([['시장',usmarket(A.usscan)],['추천',usrec(A.us)],['테슬라',tsla(A.tsla,B.tsla&&B.tsla.url)]],'ul')+st],['🇰🇷 한국',tabs([['수급',krflow(A.krflow)],['종목',krstock(A.kr)]],'ul')+st],['🪙 코인',tabs([['시장',coinmarket(A.coin&&A.coin.market)],['김프',coinkimp(A.coin&&A.coin.kimp)],['전략',coinstrat(A.coin&&A.coin.strategy)]],'ul')]],'sub');
 const auto=['kimp'].filter(k=>B[k]).map(k=>{const b=B[k];const t=b.ret_pct!=null?`<div class="kv" style="margin:-4px 0 10px">${kv('원금 대비',(b.ret_pct>0?'+':'')+b.ret_pct+'%')}${kv('완료 거래',b.trades==null?'-':b.trades+'회')}${kv('포지션',e(b.position||'-'))}</div>`:'';return card(b)+t}).join('');
-document.getElementById('root').innerHTML=tabs([['전략분석',analysis],['자동매매',auto]],'tabs');
+const td=s.todo||[];const dots=s.bots.map(b=>`<span class="tag">${I[b.state]||'⚪'} ${e(b.name)}</span>`).join('');
+const top=`<div class="card"><div class="nm">오늘 확인할 것</div>`+(td.length?td.map(t=>`<div class="it">${t.lvl==='red'?'🔴':'🟡'} <b>${e(t.bot)}</b> ${e(t.msg)}</div>`).join(''):`<div class="hl" style="font-size:14px;color:var(--tx)">✅ 확인할 것이 없어요</div>`)+`<div style="margin-top:8px">${dots}</div></div>`;
+document.getElementById('root').innerHTML=top+tabs([['전략분석',analysis],['자동매매',auto]],'tabs');
 }).catch(()=>{document.getElementById('u').textContent='불러오지 못했습니다'});
 </script></main></body></html>
