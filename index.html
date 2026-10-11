@@ -85,6 +85,32 @@ return `<h2>거시 지표 · 반감기 <span class="md">참고용 · 연준 공�
 <div class="card"><div class="nm" style="font-size:15px">반감기 ${e(h.last||'')} 이후 ${h.months}개월 · 지금은 ${e(h.now||'')} 구간</div>
 <table class="fl"><tr><th>반감기 후</th><th>김프 거래</th><th>거래당 평균</th></tr>${(h.phase||[]).map(r=>`<tr${r.k===h.now?' style="font-weight:700"':''}><td>${r.k}</td><td>${r.n}</td><td class="${cl(r.avg)}">${pc(r.avg)}</td></tr>`).join('')}</table>
 <div class="nt">다음 반감기 ${e(h.next||'')}. 표본이 2번의 사이클뿐이라 참고만 하세요.</div></div>`;}
+function coincycle(a){const x=err(a);if(x)return x;if(!a)return '';
+const C=a.cycles,ks=['2012','2016','2020','2024'],col={'2012':'#2a78d6','2016':'#eb6834','2020':'#1baf7a','2024':'currentColor'},nm={'2012':'2012 사이클','2016':'2016 사이클','2020':'2020 사이클','2024':'이번(2024)'};
+const W=340,H=200,L=36,R=10,T=8,B=22;
+const lg=v=>Math.log10(v),yA=v=>T+(1-(lg(v)-lg(0.5))/(lg(150)-lg(0.5)))*(H-T-B),xA=m=>L+(m+12)/60*(W-L-R);
+const path=(arr,fx,fy,off)=>{let d='',on=false;arr.forEach((v,i)=>{if(v==null){on=false;return}d+=(on?'L':'M')+fx(i+off).toFixed(1)+' '+fy(v).toFixed(1);on=true});return d};
+const yB=v=>T+(1-(v+100)/125)*(H-T-B),xB=m=>L+m/30*(W-L-R);
+const g1=[0.5,1,2,5,10,30,100].map(v=>`<line x1="${L}" x2="${W-R}" y1="${yA(v)}" y2="${yA(v)}" stroke="var(--bd,#8883)" stroke-width="0.6"/><text x="${L-4}" y="${yA(v)+3}" text-anchor="end" font-size="9" fill="currentColor" opacity=".6">${v}배</text>`).join('');
+const x1=[-12,0,12,24,36,48].map(m=>`<text x="${xA(m)}" y="${H-6}" text-anchor="middle" font-size="9" fill="currentColor" opacity=".6">${m>0?'+'+m:m}</text>`).join('');
+const cur=C['2024'].rel.map((v,i)=>v==null?null:i).filter(v=>v!=null).pop();
+const svgA=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;color:var(--tx)"><rect x="${xA(24)}" y="${T}" width="${xA(36)-xA(24)}" height="${H-T-B}" fill="#eda100" opacity=".13"/>${g1}${x1}<line x1="${xA(0)}" x2="${xA(0)}" y1="${T}" y2="${H-B}" stroke="currentColor" stroke-dasharray="4 3" opacity=".5"/><text x="${xA(0)+3}" y="${H-B-4}" font-size="9" fill="currentColor" opacity=".7">반감기</text>`+
+ks.map(k=>`<path d="${path(C[k].rel,xA,yA,-12)}" fill="none" stroke="${col[k]}" stroke-width="${k==='2024'?2.8:1.5}" stroke-linejoin="round"/>`).join('')+
+`<circle cx="${xA(cur-12)}" cy="${yA(C['2024'].rel[cur])}" r="3.6" fill="currentColor"/><text x="${xA(cur-12)}" y="${yA(C['2024'].rel[cur])+15}" text-anchor="middle" font-size="9" fill="currentColor">지금</text></svg>`;
+const g2=[-100,-80,-60,-40,-20,0,25].filter(v=>v<=25).map(v=>`<line x1="${L}" x2="${W-R}" y1="${yB(v)}" y2="${yB(v)}" stroke="var(--bd,#8883)" stroke-width="0.6"/><text x="${L-4}" y="${yB(v)+3}" text-anchor="end" font-size="9" fill="currentColor" opacity=".6">${v}%</text>`).join('');
+const x2=[0,6,12,18,24,30].map(m=>`<text x="${xB(m)}" y="${H-6}" text-anchor="middle" font-size="9" fill="currentColor" opacity=".6">${m}</text>`).join('');
+const nowM=C['2024'].dd.map((v,i)=>v==null?null:i).filter(v=>v!=null).pop();
+const svgB=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;color:var(--tx)">${g2}${x2}<line x1="${L}" x2="${W-R}" y1="${yB(0)}" y2="${yB(0)}" stroke="currentColor" opacity=".5"/><line x1="${xB(nowM)}" x2="${xB(nowM)}" y1="${T}" y2="${H-B}" stroke="currentColor" stroke-dasharray="4 3" opacity=".5"/>`+
+ks.map(k=>`<path d="${path(C[k].dd,xB,yB,0)}" fill="none" stroke="${col[k]}" stroke-width="${k==='2024'?2.8:1.5}" stroke-linejoin="round"/>`).join('')+`<text x="${xB(nowM)+3}" y="${H-B-4}" font-size="9" fill="currentColor" opacity=".7">지금 ${C['2024'].dd.length?nowM:''}개월</text></svg>`;
+const lgd='<div class="nt">'+ks.map(k=>`<span style="color:${col[k]==='currentColor'?'var(--tx)':col[k]}">●</span> ${nm[k]}`).join(' · ')+'</div>';
+const tb=`<table class="fl"><tr><th>반감기</th><th>고점</th><th>고점 배수</th><th>고점 후 저점</th><th>낙폭</th></tr>`+ks.map(k=>{const c=C[k];return `<tr><td>${c.halving.slice(0,7)}</td><td>${c.peak_mo}개월째</td><td>${c.peak_x}배</td><td>${c.trough_after_peak}개월 후</td><td class="dnc">${c.drop}%</td></tr>`}).join('')+`</table>`;
+const pr=`<table class="fl"><tr><th>다음 반감기</th><th>24개월 전부터</th><th>12개월 전부터</th><th>6개월 전부터</th><th>3개월 전부터</th></tr>`+a.pre.map(r=>`<tr><td>${r.halving.slice(0,7)}</td>${['24','12','6','3'].map(m=>`<td class="${cl(r[m])}">${pc(r[m])}</td>`).join('')}</tr>`).join('')+`</table>`;
+const sm=`<table class="fl"><tr><th>지금과 같은 위치에서 시작</th><th>반감기까지</th><th>중간 최저</th><th>중간 최고</th></tr>`+a.same.map(r=>`<tr><td>${r.from.slice(0,7)} → ${r.to.slice(0,7)}</td><td class="${cl(r.gain)}">${pc(r.gain)}</td><td class="dnc">${pc(r.low)}</td><td class="upc">${pc(r.high)}</td></tr>`).join('')+`</table>`;
+return `<h2>반감기 사이클 비교 <span class="md">${e(a.asof)} 기준 · 달러 일봉</span></h2>
+<div class="card"><div class="nm" style="font-size:14px">① 반감기 가격을 1배로 맞춘 흐름 <span class="md">노란 띠 = 반감기 후 24~36개월</span></div>${svgA}<div class="nt">가로: 반감기로부터 몇 개월 · 세로: 반감기 때 가격의 몇 배(로그)</div>${lgd}</div>
+<div class="card"><div class="nm" style="font-size:14px">② 고점에서 얼마나 빠졌나</div>${svgB}<div class="nt">가로: 사이클 고점으로부터 몇 개월 · 세로: 고점 대비 %</div>${lgd}</div>
+<div class="card">${tb}<div class="nt">이번 사이클은 고점 배수가 가장 작고 하락도 가장 얕았어요.</div></div>
+<h2>반감기를 앞둔 때 <span class="md">반감기 직전 N개월 동안의 변화</span></h2><div class="card">${pr}${sm}<div class="nt">다음 반감기는 2028년 4월쯤 예상이에요. 과거 3번의 패턴일 뿐 예측이 아니고, 이번 사이클은 과거보다 규모가 작아 그대로 반복된다는 보장이 없어요.</div></div>`;}
 function coinstrat(a){const x=err(a);if(x)return x;if(!a)return '<div class="card nt">자료 없음</div>';
 return `<h2>이동평균 신호 <span class="md">${e(a.asof)} 일봉 종가 기준</span></h2><div class="card"><div class="nt">종가가 이동평균 위면 보유, 아래면 현금 (비트봇 규칙)</div><table class="fl"><tr><th>이동평균</th><th>값</th><th>현재가 대비</th><th>신호</th></tr>`+
 a.signals.map(r=>`<tr><td>${r.n}일</td><td>${Math.round(r.ma/1e4).toLocaleString()}만</td><td class="${cl(r.gap)}">${pc(r.gap)}</td><td>${r.hold?'🟢 보유':'⚪ 현금'}</td></tr>`).join('')+`</table></div>
@@ -107,7 +133,7 @@ fetch('https://raw.githubusercontent.com/'+rp+'/data/hub.json?_='+Date.now(),{ca
 document.getElementById('u').textContent='갱신 '+s.ts+' (KST) · 금액·수량·보유 종목은 공개하지 않음';
 const B=Object.fromEntries(s.bots.map(b=>[b.id,b]));const A=s.analysis||{};
 const st=B.stock&&B.stock.age_min!=null?`<div class="nt" style="margin-top:6px">주식 분석 봇 마지막 갱신 ${B.stock.age_min}분 전</div>`:'';
-const analysis=tabs([['🇺🇸 미국',tabs([['시장',usmarket(A.usscan)],['추천',usrec(A.us)],['테슬라',tsla(A.tsla,B.tsla&&B.tsla.url)]],'ul')+st],['🇰🇷 한국',tabs([['수급',krflow(A.krflow)],['종목',krstock(A.kr)]],'ul')+st],['🪙 코인',tabs([['시장',coinmarket(A.coin&&A.coin.market)],['김프',coinkimp(A.coin&&A.coin.kimp)],['전략',coinstrat(A.coin&&A.coin.strategy)],['구간',coinregime(A.coin&&A.coin.regime)+coinmacro(A.coin&&A.coin.macro)]],'ul')]],'sub');
+const analysis=tabs([['🇺🇸 미국',tabs([['시장',usmarket(A.usscan)],['추천',usrec(A.us)],['테슬라',tsla(A.tsla,B.tsla&&B.tsla.url)]],'ul')+st],['🇰🇷 한국',tabs([['수급',krflow(A.krflow)],['종목',krstock(A.kr)]],'ul')+st],['🪙 코인',tabs([['시장',coinmarket(A.coin&&A.coin.market)],['김프',coinkimp(A.coin&&A.coin.kimp)],['전략',coinstrat(A.coin&&A.coin.strategy)],['구간',coinregime(A.coin&&A.coin.regime)+coincycle(A.coin&&A.coin.cycle)+coinmacro(A.coin&&A.coin.macro)]],'ul')]],'sub');
 const auto=['kimp','btc'].filter(k=>B[k]).map(k=>{const b=B[k];const t=b.ret_pct!=null?`<div class="kv" style="margin:-4px 0 10px">${kv('원금 대비',(b.ret_pct>0?'+':'')+b.ret_pct+'%')}${kv(k==='btc'?'매매 기록':'완료 거래',b.trades==null?'-':b.trades+'회')}${kv('포지션',e(b.position||'-'))}</div>`:'';return card(b)+t}).join('');
 const td=s.todo||[];const dots=s.bots.map(b=>`<span class="tag">${I[b.state]||'⚪'} ${e(b.name)}</span>`).join('');
 const top=`<div class="card"><div class="nm">오늘 확인할 것</div>`+(td.length?td.map(t=>`<div class="it">${t.lvl==='red'?'🔴':'🟡'} <b>${e(t.bot)}</b> ${e(t.msg)}</div>`).join(''):`<div class="hl" style="font-size:14px;color:var(--tx)">✅ 확인할 것이 없어요</div>`)+`<div style="margin-top:8px">${dots}</div></div>`;
