@@ -1,7 +1,7 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>투자 허브</title><style>
-:root{--bg:#f4f5f7;--card:#fff;--tx:#161a21;--mut:#6b7280;--ln:#e5e7eb;--ac:#2563eb;--tile:#f0f2f5;--up:#d92d20;--dn:#1d6fe8}
-@media(prefers-color-scheme:dark){:root{--bg:#101216;--card:#1a1b1e;--tx:#e9ecf1;--mut:#9aa3b2;--ln:#2a2d33;--ac:#5b8def;--tile:#22252b;--up:#ff6b5e;--dn:#6aa8ff}}
+:root{--bg:#f4f5f7;--card:#fff;--tx:#161a21;--mut:#6b7280;--ln:#e5e7eb;--ac:#2563eb;--tile:#f0f2f5;--up:#d92d20;--dn:#1d6fe8;--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100}
+@media(prefers-color-scheme:dark){:root{--bg:#101216;--card:#1a1b1e;--tx:#e9ecf1;--mut:#9aa3b2;--ln:#2a2d33;--ac:#5b8def;--tile:#22252b;--up:#ff6b5e;--dn:#6aa8ff;--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500}}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.5 -apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif}
 main{max-width:640px;margin:0 auto;padding:18px 16px 56px}h1{font-size:19px;margin:0 0 2px;letter-spacing:-.2px}.upd{color:var(--mut);font-size:12px;margin-bottom:12px}
 .tabs{display:flex;gap:6px;margin-bottom:12px}.tabs button{flex:1;padding:9px 0;border:1px solid var(--ln);background:var(--card);color:var(--tx);border-radius:10px;font:inherit;font-weight:650;cursor:pointer}.tabs button.on{background:var(--ac);border-color:var(--ac);color:#fff}
@@ -17,7 +17,7 @@ details{border-top:1px solid var(--ln);padding:6px 0}details:first-of-type{borde
 a.card{display:block;color:inherit;text-decoration:none}.tag{display:inline-block;padding:1px 8px;border-radius:99px;background:var(--tile);font-size:12px;margin:0 4px 4px 0}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.two .card{margin:0}.li{display:flex;justify-content:space-between;gap:6px;font-size:13px;padding:3px 0}.li span:last-child{font-weight:650;white-space:nowrap}
 .upc{color:var(--up)}.dnc{color:var(--dn)}table.fl{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px}table.fl th,table.fl td{padding:4px 2px;text-align:right}table.fl th:first-child,table.fl td:first-child{text-align:left}table.fl th{color:var(--mut);font-weight:600}table.fl tr.sum td{border-top:1px solid var(--ln);font-weight:650}
-.bar{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:6px 0}.bar i{display:block}
+.lcw{position:relative}.lct{position:absolute;display:none;pointer-events:none;background:var(--card);border:1px solid var(--ln);border-radius:8px;padding:6px 9px;font-size:12px;line-height:1.5;box-shadow:0 4px 14px #0002;white-space:nowrap;z-index:5}.lcg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--mut);margin:2px 0 6px}.lcg i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}.bar{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:6px 0}.bar i{display:block}
 </style></head><body><main><h1>투자 허브</h1><div class="upd" id="u">불러오는 중…</div><div id="root"></div>
 <script>
 const rp=location.hostname.split('.')[0]+'/'+location.pathname.split('/')[1];
@@ -49,9 +49,32 @@ return `<h2>AI·반도체 차트 <span class="md">${e(a.asof)} 기준</span></h2
 (a.watch&&a.watch.length?`<h2>내 관심 종목</h2><div class="card">${a.watch.map(x=>`<div class="it"><span class="sym">${e(x.sym)}</span> <span>${e(x.label)}</span></div>`).join('')}</div>`:'');}
 
 const err=a=>a&&a.error?`<div class="card nt">불러오지 못했어요 (${e(a.error)})</div>`:null;
-function spark(a,L){const W=340,H=96,vs=a.concat(L.map(l=>l.v)),mn=Math.min(...vs),mx=Math.max(...vs),y=v=>H-8-(v-mn)/((mx-mn)||1)*(H-16),x=i=>i*(W/(a.length-1));
-return `<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block"><polyline fill="none" stroke="var(--ac)" stroke-width="1.8" points="${a.map((v,i)=>x(i).toFixed(1)+','+y(v).toFixed(1)).join(' ')}"/>`+
-L.map(l=>`<line x1="0" x2="${W}" y1="${y(l.v)}" y2="${y(l.v)}" stroke="${l.c}" stroke-width="1" stroke-dasharray="4 3"/><text x="${W-2}" y="${y(l.v)-3}" text-anchor="end" font-size="9" fill="${l.c}">${l.t} ${l.v}%</text>`).join('')+`</svg>`;}
+const LC={};
+function lc(o){const id='lc'+Object.keys(LC).length,CW=Math.max(290,Math.min(580,(document.documentElement.clientWidth||380)-64)),W=CW,H=o.H||250,L=o.L||46,R=o.R||12,T=o.T||10,B=o.B||26;
+const xs=o.x,ys=o.y,lg=ys.log?Math.log10:(v=>v);
+const X=v=>L+(v-xs.min)/(xs.max-xs.min)*(W-L-R),Y=v=>T+(1-(lg(v)-lg(ys.min))/(lg(ys.max)-lg(ys.min)))*(H-T-B);
+const f=(v)=>(+v).toFixed(1);let g='';
+(o.bands||[]).forEach(b=>{g+=`<rect x="${f(X(b.x0))}" y="${T}" width="${f(X(b.x1)-X(b.x0))}" height="${H-T-B}" fill="${b.c||'var(--s4)'}" opacity=".14"/>`+(b.t?`<text x="${f((X(b.x0)+X(b.x1))/2)}" y="${T+13}" text-anchor="middle" font-size="11" fill="var(--mut)">${b.t}</text>`:'')});
+ys.ticks.forEach(v=>{g+=`<line x1="${L}" x2="${W-R}" y1="${f(Y(v))}" y2="${f(Y(v))}" stroke="var(--ln)" stroke-width="1"/><text x="${L-6}" y="${f(Y(v)+4)}" text-anchor="end" font-size="11" fill="var(--mut)">${ys.fmt?ys.fmt(v):v}</text>`});
+xs.ticks.forEach(v=>{g+=`<text x="${f(X(v))}" y="${H-8}" text-anchor="middle" font-size="11" fill="var(--mut)">${xs.fmt?xs.fmt(v):v}</text>`});
+(o.vlines||[]).forEach(v=>{g+=`<line x1="${f(X(v.x))}" x2="${f(X(v.x))}" y1="${T}" y2="${H-B}" stroke="var(--mut)" stroke-width="1.2" stroke-dasharray="4 3"/>`+(v.t?`<text x="${f(X(v.x)+5)}" y="${H-B-6}" font-size="11" fill="var(--mut)">${v.t}</text>`:'')});
+(o.hlines||[]).forEach(h=>{g+=`<line x1="${L}" x2="${W-R}" y1="${f(Y(h.y))}" y2="${f(Y(h.y))}" stroke="${h.c||'var(--mut)'}" stroke-width="1.3" stroke-dasharray="${h.solid?'0':'5 4'}"/>`+(h.t?`<text x="${W-R-3}" y="${f(Y(h.y)-5)}" text-anchor="end" font-size="11" fill="var(--tx)">${h.t}</text>`:'')});
+o.series.forEach(s=>{let d='',on=false;s.pts.forEach(p=>{if(p[1]==null){on=false;return}d+=(on?'L':'M')+f(X(p[0]))+' '+f(Y(Math.max(ys.min,Math.min(ys.max,p[1]))));on=true});g+=`<path d="${d}" fill="none" stroke="${s.c}" stroke-width="${s.w||2}" stroke-linejoin="round" stroke-linecap="round"/>`});
+(o.marks||[]).forEach(m=>{g+=`<circle cx="${f(X(m.x))}" cy="${f(Y(m.y))}" r="${m.r||4.5}" fill="${m.c}" stroke="var(--card)" stroke-width="2"/>`+(m.t?`<text x="${f(X(m.x)+(m.dx==null?0:m.dx))}" y="${f(Y(m.y)+(m.dy==null?-9:m.dy))}" text-anchor="${m.a||'middle'}" font-size="11" font-weight="700" fill="var(--tx)">${m.t}</text>`:'')});
+g+=`<line id="${id}x" x1="0" x2="0" y1="${T}" y2="${H-B}" stroke="var(--mut)" stroke-width="1" style="display:none"/>`+o.series.map((s,i)=>`<circle id="${id}d${i}" r="4.5" fill="${s.c}" stroke="var(--card)" stroke-width="2" style="display:none"/>`).join('');
+g+=`<rect x="${L}" y="${T}" width="${W-L-R}" height="${H-T-B}" fill="transparent" style="touch-action:pan-y" onpointermove="lcM(event,'${id}')" onpointerdown="lcM(event,'${id}')" onpointerleave="lcH('${id}')"/>`;
+LC[id]={o,W,H,L,R,T,B,X,Y};
+const lgd='<div class="lcg">'+o.series.map(s=>`<span><i style="background:${s.c}"></i>${s.n}</span>`).join('')+'</div>';
+return lgd+`<div class="lcw" id="${id}"><div class="lct" id="${id}t"></div><svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;overflow:visible">${g}</svg></div>`;}
+function lcH(id){['x'].concat(LC[id].o.series.map((s,i)=>'d'+i)).forEach(k=>{const n=document.getElementById(id+k);if(n)n.style.display='none'});document.getElementById(id+'t').style.display='none'}
+function lcM(ev,id){const c=LC[id],o=c.o,r=ev.currentTarget.getBoundingClientRect(),px=(ev.clientX-r.left)/r.width*(c.W-c.L-c.R)+c.L,xv=o.x.min+(px-c.L)/(c.W-c.L-c.R)*(o.x.max-o.x.min);
+let best=null;o.series.forEach(s=>s.pts.forEach(p=>{if(p[1]!=null&&(best==null||Math.abs(p[0]-xv)<Math.abs(best-xv)))best=p[0]}));if(best==null)return;
+const X=c.X(best);const ln=document.getElementById(id+'x');ln.setAttribute('x1',X);ln.setAttribute('x2',X);ln.style.display='';
+let rows='';o.series.forEach((s,i)=>{const p=s.pts.find(q=>q[0]===best&&q[1]!=null),d=document.getElementById(id+'d'+i);if(!p){d.style.display='none';return}d.setAttribute('cx',X);d.setAttribute('cy',c.Y(p[1]));d.style.display='';rows+=`<div><span style="color:${s.c}">●</span> ${s.n} <b>${o.y.tip?o.y.tip(p[1]):p[1]}</b></div>`});
+const t=document.getElementById(id+'t');t.innerHTML=`<div style="color:var(--mut)">${o.x.tip?o.x.tip(best):best}</div>`+rows;t.style.display='block';const w=t.offsetWidth,bw=document.getElementById(id).getBoundingClientRect().width,xl=X/c.W*bw;t.style.left=Math.max(0,Math.min(bw-w,xl-w/2))+'px';t.style.top='-4px'}
+function spark(a,L){const n=a.length,pts=a.map((v,i)=>[-24+i*24/(n-1),v]),all=a.concat(L.map(l=>l.v)),mn=Math.min(...all),mx=Math.max(...all),pad=(mx-mn)*0.12||0.2,lo=Math.floor((mn-pad)*10)/10,hi=Math.ceil((mx+pad)*10)/10,st=(hi-lo)/4,tk=[0,1,2,3,4].map(k=>+(lo+st*k).toFixed(2));
+return lc({H:230,x:{min:-24,max:0,ticks:[-24,-18,-12,-6,0],fmt:v=>v===0?'지금':v+'시간',tip:v=>v===0?'지금':Math.abs(Math.round(v*10)/10)+'시간 전'},y:{min:lo,max:hi,ticks:tk,fmt:v=>v.toFixed(1)+'%',tip:v=>v.toFixed(2)+'%'},
+series:[{n:'김프',c:'var(--s1)',w:2.4,pts}],hlines:L.map(l=>({y:l.v,c:l.c,t:l.t+' '+l.v+'%'})),marks:[{x:0,y:a[n-1],c:'var(--s1)'}]});}
 function coinmarket(a){const x=err(a);if(x)return x;const b=a.btc||{};
 const li=l=>l.map(r=>`<div class="li"><span>${e(r.sym)} <span class="md">${e(r.name)}</span></span><span class="${cl(r.chg)}">${pc(r.chg)}</span></div>`).join('');
 const tr=Object.keys(a.trend||{}).map(n=>`<tr><td>${n}일선</td><td>${Math.round(a.trend[n].ma/1e4).toLocaleString()}만</td><td class="${cl(a.trend[n].gap)}">${pc(a.trend[n].gap)}</td><td>${a.trend[n].gap>0?'위':'아래'}</td></tr>`).join('');
@@ -86,31 +109,38 @@ return `<h2>거시 지표 · 반감기 <span class="md">참고용 · 연준 공�
 <table class="fl"><tr><th>반감기 후</th><th>김프 거래</th><th>거래당 평균</th></tr>${(h.phase||[]).map(r=>`<tr${r.k===h.now?' style="font-weight:700"':''}><td>${r.k}</td><td>${r.n}</td><td class="${cl(r.avg)}">${pc(r.avg)}</td></tr>`).join('')}</table>
 <div class="nt">다음 반감기 ${e(h.next||'')}. 표본이 2번의 사이클뿐이라 참고만 하세요.</div></div>`;}
 function coincycle(a){const x=err(a);if(x)return x;if(!a)return '';
-const C=a.cycles,ks=['2012','2016','2020','2024'],col={'2012':'#2a78d6','2016':'#eb6834','2020':'#1baf7a','2024':'currentColor'},nm={'2012':'2012 사이클','2016':'2016 사이클','2020':'2020 사이클','2024':'이번(2024)'};
-const W=340,H=200,L=36,R=10,T=8,B=22;
-const lg=v=>Math.log10(v),yA=v=>T+(1-(lg(v)-lg(0.5))/(lg(150)-lg(0.5)))*(H-T-B),xA=m=>L+(m+12)/60*(W-L-R);
-const path=(arr,fx,fy,off)=>{let d='',on=false;arr.forEach((v,i)=>{if(v==null){on=false;return}d+=(on?'L':'M')+fx(i+off).toFixed(1)+' '+fy(v).toFixed(1);on=true});return d};
-const yB=v=>T+(1-(v+100)/125)*(H-T-B),xB=m=>L+m/30*(W-L-R);
-const g1=[0.5,1,2,5,10,30,100].map(v=>`<line x1="${L}" x2="${W-R}" y1="${yA(v)}" y2="${yA(v)}" stroke="var(--bd,#8883)" stroke-width="0.6"/><text x="${L-4}" y="${yA(v)+3}" text-anchor="end" font-size="9" fill="currentColor" opacity=".6">${v}배</text>`).join('');
-const x1=[-12,0,12,24,36,48].map(m=>`<text x="${xA(m)}" y="${H-6}" text-anchor="middle" font-size="9" fill="currentColor" opacity=".6">${m>0?'+'+m:m}</text>`).join('');
+const C=a.cycles,ks=['2012','2016','2020','2024'],col={'2012':'var(--s1)','2016':'var(--s2)','2020':'var(--s3)','2024':'var(--tx)'},nm={'2012':'2012 사이클','2016':'2016 사이클','2020':'2020 사이클','2024':'이번(2024) 사이클'};
+const sA=ks.map(k=>({n:nm[k],c:col[k],w:k==='2024'?3.4:1.8,pts:C[k].rel.map((v,i)=>[i-12,v])}));
 const cur=C['2024'].rel.map((v,i)=>v==null?null:i).filter(v=>v!=null).pop();
-const svgA=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;color:var(--tx)"><rect x="${xA(24)}" y="${T}" width="${xA(36)-xA(24)}" height="${H-T-B}" fill="#eda100" opacity=".13"/>${g1}${x1}<line x1="${xA(0)}" x2="${xA(0)}" y1="${T}" y2="${H-B}" stroke="currentColor" stroke-dasharray="4 3" opacity=".5"/><text x="${xA(0)+3}" y="${H-B-4}" font-size="9" fill="currentColor" opacity=".7">반감기</text>`+
-ks.map(k=>`<path d="${path(C[k].rel,xA,yA,-12)}" fill="none" stroke="${col[k]}" stroke-width="${k==='2024'?2.8:1.5}" stroke-linejoin="round"/>`).join('')+
-`<circle cx="${xA(cur-12)}" cy="${yA(C['2024'].rel[cur])}" r="3.6" fill="currentColor"/><text x="${xA(cur-12)}" y="${yA(C['2024'].rel[cur])+15}" text-anchor="middle" font-size="9" fill="currentColor">지금</text></svg>`;
-const g2=[-100,-80,-60,-40,-20,0,25].filter(v=>v<=25).map(v=>`<line x1="${L}" x2="${W-R}" y1="${yB(v)}" y2="${yB(v)}" stroke="var(--bd,#8883)" stroke-width="0.6"/><text x="${L-4}" y="${yB(v)+3}" text-anchor="end" font-size="9" fill="currentColor" opacity=".6">${v}%</text>`).join('');
-const x2=[0,6,12,18,24,30].map(m=>`<text x="${xB(m)}" y="${H-6}" text-anchor="middle" font-size="9" fill="currentColor" opacity=".6">${m}</text>`).join('');
+const A1=lc({H:290,L:50,x:{min:-12,max:48,ticks:[-12,0,12,24,36,48],fmt:v=>(v>0?'+':'')+v,tip:v=>'반감기 '+(v>=0?'후 ':'전 ')+Math.abs(v)+'개월'},y:{log:true,min:0.5,max:150,ticks:[0.5,1,2,5,10,30,100],fmt:v=>v+'배',tip:v=>(+v).toFixed(v>=10?0:1)+'배'},
+series:sA,bands:[{x0:24,x1:36,t:'반감기 후 24~36개월'}],vlines:[{x:0,t:'반감기'}],marks:[{x:cur-12,y:C['2024'].rel[cur],c:'var(--tx)',r:5.5,t:'지금',dy:20}].concat(ks.filter(k=>k!=='2024'||true).map(k=>({x:C[k].peak_mo,y:C[k].peak_x,c:col[k],r:4}))) });
+const sB=ks.map(k=>({n:nm[k],c:col[k],w:k==='2024'?3.4:1.8,pts:C[k].dd.map((v,i)=>[i,v])}));
 const nowM=C['2024'].dd.map((v,i)=>v==null?null:i).filter(v=>v!=null).pop();
-const svgB=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block;color:var(--tx)">${g2}${x2}<line x1="${L}" x2="${W-R}" y1="${yB(0)}" y2="${yB(0)}" stroke="currentColor" opacity=".5"/><line x1="${xB(nowM)}" x2="${xB(nowM)}" y1="${T}" y2="${H-B}" stroke="currentColor" stroke-dasharray="4 3" opacity=".5"/>`+
-ks.map(k=>`<path d="${path(C[k].dd,xB,yB,0)}" fill="none" stroke="${col[k]}" stroke-width="${k==='2024'?2.8:1.5}" stroke-linejoin="round"/>`).join('')+`<text x="${xB(nowM)+3}" y="${H-B-4}" font-size="9" fill="currentColor" opacity=".7">지금 ${C['2024'].dd.length?nowM:''}개월</text></svg>`;
-const lgd='<div class="nt">'+ks.map(k=>`<span style="color:${col[k]==='currentColor'?'var(--tx)':col[k]}">●</span> ${nm[k]}`).join(' · ')+'</div>';
+const B1=lc({H:270,L:50,x:{min:0,max:30,ticks:[0,6,12,18,24,30],fmt:v=>v,tip:v=>'고점 후 '+v+'개월'},y:{min:-100,max:25,ticks:[-100,-80,-60,-40,-20,0],fmt:v=>v+'%',tip:v=>Math.round(v)+'%'},
+series:sB,hlines:[{y:0,solid:true}],vlines:[{x:nowM,t:'지금'}],marks:ks.map(k=>({x:C[k].trough_after_peak,y:C[k].drop,c:col[k],r:4.5})) });
 const tb=`<table class="fl"><tr><th>반감기</th><th>고점</th><th>고점 배수</th><th>고점 후 저점</th><th>낙폭</th></tr>`+ks.map(k=>{const c=C[k];return `<tr><td>${c.halving.slice(0,7)}</td><td>${c.peak_mo}개월째</td><td>${c.peak_x}배</td><td>${c.trough_after_peak}개월 후</td><td class="dnc">${c.drop}%</td></tr>`}).join('')+`</table>`;
-const pr=`<table class="fl"><tr><th>다음 반감기</th><th>24개월 전부터</th><th>12개월 전부터</th><th>6개월 전부터</th><th>3개월 전부터</th></tr>`+a.pre.map(r=>`<tr><td>${r.halving.slice(0,7)}</td>${['24','12','6','3'].map(m=>`<td class="${cl(r[m])}">${pc(r[m])}</td>`).join('')}</tr>`).join('')+`</table>`;
-const sm=`<table class="fl"><tr><th>지금과 같은 위치에서 시작</th><th>반감기까지</th><th>중간 최저</th><th>중간 최고</th></tr>`+a.same.map(r=>`<tr><td>${r.from.slice(0,7)} → ${r.to.slice(0,7)}</td><td class="${cl(r.gain)}">${pc(r.gain)}</td><td class="dnc">${pc(r.low)}</td><td class="upc">${pc(r.high)}</td></tr>`).join('')+`</table>`;
 return `<h2>반감기 사이클 비교 <span class="md">${e(a.asof)} 기준 · 달러 일봉</span></h2>
-<div class="card"><div class="nm" style="font-size:14px">① 반감기 가격을 1배로 맞춘 흐름 <span class="md">노란 띠 = 반감기 후 24~36개월</span></div>${svgA}<div class="nt">가로: 반감기로부터 몇 개월 · 세로: 반감기 때 가격의 몇 배(로그)</div>${lgd}</div>
-<div class="card"><div class="nm" style="font-size:14px">② 고점에서 얼마나 빠졌나</div>${svgB}<div class="nt">가로: 사이클 고점으로부터 몇 개월 · 세로: 고점 대비 %</div>${lgd}</div>
-<div class="card">${tb}<div class="nt">이번 사이클은 고점 배수가 가장 작고 하락도 가장 얕았어요.</div></div>
-<h2>반감기를 앞둔 때 <span class="md">반감기 직전 N개월 동안의 변화</span></h2><div class="card">${pr}${sm}<div class="nt">다음 반감기는 2028년 4월쯤 예상이에요. 과거 3번의 패턴일 뿐 예측이 아니고, 이번 사이클은 과거보다 규모가 작아 그대로 반복된다는 보장이 없어요.</div></div>`;}
+<div class="card"><div class="nm" style="font-size:15px">① 반감기 가격을 1배로 맞춘 흐름</div><div class="nt" style="margin-bottom:6px">가로: 반감기로부터 몇 개월(+는 이후) · 세로: 반감기 때 가격의 몇 배(로그) · ●는 사이클 고점 · 터치하면 값이 보여요</div>${A1}</div>
+<div class="card"><div class="nm" style="font-size:15px">② 고점에서 얼마나 빠졌나</div><div class="nt" style="margin-bottom:6px">가로: 사이클 고점으로부터 몇 개월 · 세로: 고점 대비 % · ●는 저점 · 점선이 지금</div>${B1}</div>
+<div class="card">${tb}<div class="nt">이번 사이클은 고점 배수가 가장 작고 하락도 가장 얕았어요.</div></div>`+coinpre(a);}
+
+function coinpre(a){if(!a||!a.pre)return '';
+const col={'2016':'var(--s2)','2020':'var(--s3)','2024':'var(--tx)'};
+const win=[['24','24개월 전'],['12','12개월 전'],['6','6개월 전'],['3','3개월 전']];
+const mn=-30,mx=150,pz=(0-mn)/(mx-mn)*100;
+const bar=(v)=>{const l=Math.min(pz,(v-mn)/(mx-mn)*100),w=Math.abs(v)/(mx-mn)*100;return `<div style="position:relative;height:14px;background:var(--tile);border-radius:4px"><div style="position:absolute;left:${pz}%;top:-2px;bottom:-2px;width:1px;background:var(--mut)"></div><div style="position:absolute;left:${l}%;width:${w}%;top:2px;bottom:2px;border-radius:3px;background:${v>=0?'var(--up)':'var(--dn)'};opacity:.85"></div></div>`};
+const g1=win.map(([k,t])=>`<div style="margin:12px 0 4px;font-weight:650;font-size:13px">${t}에 샀다면</div>`+a.pre.map(r=>`<div style="display:grid;grid-template-columns:78px 1fr 52px;gap:8px;align-items:center;margin:3px 0;font-size:12px"><span style="color:var(--mut)">${r.halving.slice(0,4)} 반감기</span>${bar(r[k])}<b class="${cl(r[k])}" style="text-align:right">${pc(r[k])}</b></div>`).join('')).join('');
+const rg=[-40,0,100,200,300],A0=-40,A1=300,P=v=>(v-A0)/(A1-A0)*100;
+const g2=a.same.map(r=>`<div style="margin:14px 0 2px;font-size:13px;font-weight:650">${r.from.slice(0,7)} → ${r.to.slice(0,7)} <span class="md">반감기까지 ${Math.round((new Date(r.to)-new Date(r.from))/2629800000)}개월</span></div>
+<div style="position:relative;height:22px;margin:6px 0 2px"><div style="position:absolute;left:0;right:0;top:10px;height:2px;background:var(--ln)"></div><div style="position:absolute;left:${P(0)}%;top:2px;bottom:2px;width:1px;background:var(--mut)"></div><div style="position:absolute;left:${P(r.low)}%;width:${P(r.high)-P(r.low)}%;top:6px;height:10px;border-radius:5px;background:var(--ac);opacity:.28"></div><div style="position:absolute;left:calc(${P(r.gain)}% - 6px);top:5px;width:12px;height:12px;border-radius:50%;background:var(--up);border:2px solid var(--card)"></div></div>
+<div style="font-size:12px;color:var(--mut)">반감기 날 <b class="${cl(r.gain)}">${pc(r.gain)}</b> · 도중 가장 많이 빠졌을 때 <b class="dnc">${pc(r.low)}</b> · 도중 가장 높았을 때 <b class="upc">${pc(r.high)}</b></div>`).join('');
+const gains=a.same.map(r=>r.gain),lows=a.same.map(r=>r.low);
+return `<h2>반감기를 앞둔 때 <span class="md">과거에는 어땠나</span></h2>
+<div class="card"><div class="nm" style="font-size:15px">한 줄 요약</div><div class="hl" style="font-size:14px;color:var(--tx)">지금과 같은 위치에서 시작한 과거 3번은 모두 다음 반감기 전에 올랐어요 (${Math.min(...gains)}~${Math.max(...gains)}%). 다만 도중에 ${Math.max(...lows)}~${Math.min(...lows)}%까지 빠지는 시기가 있었어요.</div>
+<div class="nt">지금 위치: 앞 반감기(2024-04) 후 약 30개월 · 다음 반감기(2028년 4월쯤 예상)까지 약 18개월</div></div>
+<div class="card"><div class="nm" style="font-size:15px">① 지금과 같은 위치에서 시작했다면</div><div class="nt">앞 반감기 후 약 30개월째에 사서 다음 반감기 날까지 들고 있었다고 가정해요. 파란 띠는 그 사이 가격이 오르내린 범위, 빨간 점은 반감기 날의 결과예요.</div>${g2}<div class="nt" style="margin-top:8px">0%보다 오른쪽이면 산 가격보다 올랐다는 뜻이에요.</div></div>
+<div class="card"><div class="nm" style="font-size:15px">② 반감기 직전 몇 개월 동안 얼마나 올랐나</div><div class="nt">반감기 N개월 전에 사서 반감기 날까지 들고 있었을 때의 수익률이에요. 빨강은 상승, 파랑은 하락.</div>${g1}</div>
+<div class="nt" style="margin:8px 4px">과거 3번의 패턴일 뿐 예측이 아니에요. 이번 사이클은 과거보다 규모가 작아서 그대로 반복된다는 보장이 없어요.</div>`;}
 function coinstrat(a){const x=err(a);if(x)return x;if(!a)return '<div class="card nt">자료 없음</div>';
 return `<h2>이동평균 신호 <span class="md">${e(a.asof)} 일봉 종가 기준</span></h2><div class="card"><div class="nt">종가가 이동평균 위면 보유, 아래면 현금 (비트봇 규칙)</div><table class="fl"><tr><th>이동평균</th><th>값</th><th>현재가 대비</th><th>신호</th></tr>`+
 a.signals.map(r=>`<tr><td>${r.n}일</td><td>${Math.round(r.ma/1e4).toLocaleString()}만</td><td class="${cl(r.gap)}">${pc(r.gap)}</td><td>${r.hold?'🟢 보유':'⚪ 현금'}</td></tr>`).join('')+`</table></div>
