@@ -66,6 +66,18 @@ return `<h2>김치 프리미엄 <span class="md">최근 24시간</span></h2><div
 <div class="kv">${kv('현재 김프',a.cur+'%')}${kv('24시간 기준선',a.base+'%')}${kv('변동성(σ)',a.sd+'%p')}${kv('진입선',a.entry+'%')}${kv('청산선',a.exit+'%')}${kv('기준 대비',(a.gap_now>0?'+':'')+a.gap_now+'%p')}</div>
 <div style="margin-top:10px">${spark(a.spark,[{v:a.exit,c:'#e8590c',t:'청산'},{v:a.base,c:'#8a94a6',t:'기준'},{v:a.entry,c:'#0e9f6e',t:'진입'}])}</div>
 <div class="nt">진입 규칙: 기준선보다 0.25%p 낮고 변동성이 0.33%p 이상일 때 (김프봇 설정 기준)</div></div>`;}
+function coinregime(a){const x=err(a);if(x)return x;if(!a)return '<div class="card nt">자료 없음</div>';
+const ic={'상승':'🟢','하락':'🔴','횡보':'⚪'},col={'상승':'#0e9f6e','하락':'#e03131','횡보':'#8a94a6'},H=a.hist||{};
+const tot=a.segs.reduce((s,r)=>s+r.n,0)||1;
+const tip={'상승':'과거 6년 내내 이익이 났던 구간이에요. 청산을 길게(0.8~1.5%p) 잡는 쪽이 4/6해 우위였지만 이득은 작아요.','하락':'해마다 결과가 달라요(2023·2024는 손실). 진입선을 깊게(0.40%p) 잡는 쪽이 5/6해 우위였어요.','횡보':'2026년엔 약했지만 6년 평균은 플러스예요. 환율 하락이 겹치면 손실이 나기 쉬워요.'};
+return `<h2>코인 시장 구간 <span class="md">${e(a.asof)} 일봉 · 원화 기준</span></h2><div class="card"><div class="nm" style="font-size:16px">${ic[a.cur]||'⚪'} 지금은 ${e(a.cur)} 구간 (${a.days}일째)</div>
+<div class="kv">${kv('30일 수익률',pc(a.r30))}${kv('60일선 대비',pc(a.gap60))}</div>
+<div class="bar">${a.segs.map(s=>`<i style="width:${s.n*100/tot}%;background:${col[s.k]}"></i>`).join('')}</div>
+<div class="nt">최근 120일 구간 · <span style="color:#0e9f6e">●</span> 상승 <span style="color:#e03131">●</span> 하락 <span style="color:#8a94a6">●</span> 횡보</div>
+<div class="nt">${e(tip[a.cur]||'')}</div></div>
+<h2>김프 전략의 구간별 과거 성과 <span class="md">거래당 평균 손익 · 진입 전날 구간 기준</span></h2><div class="card"><table class="fl"><tr><th>구간</th><th>6년 거래</th><th>승률</th><th>6년 평균</th><th>올해 평균</th></tr>`+
+['상승','하락','횡보'].map(k=>`<tr${k===a.cur?' style="font-weight:700"':''}><td>${ic[k]} ${k}</td><td>${H[k].n}</td><td>${H[k].win}%</td><td class="${cl(H[k].avg)}">${pc(H[k].avg)}</td><td class="${cl(H[k].avg26)}">${pc(H[k].avg26)} <span class="md">(${H[k].n26}건)</span></td></tr>`).join('')+
+`</table><div class="nt">참고용이에요. 구간별로 설정을 바꿔도 검증 구간(2024~26)에서는 이득이 거의 없어서 봇 설정은 그대로 둡니다.</div></div>`;}
 function coinstrat(a){const x=err(a);if(x)return x;if(!a)return '<div class="card nt">자료 없음</div>';
 return `<h2>이동평균 신호 <span class="md">${e(a.asof)} 일봉 종가 기준</span></h2><div class="card"><div class="nt">종가가 이동평균 위면 보유, 아래면 현금 (비트봇 규칙)</div><table class="fl"><tr><th>이동평균</th><th>값</th><th>현재가 대비</th><th>신호</th></tr>`+
 a.signals.map(r=>`<tr><td>${r.n}일</td><td>${Math.round(r.ma/1e4).toLocaleString()}만</td><td class="${cl(r.gap)}">${pc(r.gap)}</td><td>${r.hold?'🟢 보유':'⚪ 현금'}</td></tr>`).join('')+`</table></div>
@@ -88,7 +100,7 @@ fetch('https://raw.githubusercontent.com/'+rp+'/data/hub.json?_='+Date.now(),{ca
 document.getElementById('u').textContent='갱신 '+s.ts+' (KST) · 금액·수량·보유 종목은 공개하지 않음';
 const B=Object.fromEntries(s.bots.map(b=>[b.id,b]));const A=s.analysis||{};
 const st=B.stock&&B.stock.age_min!=null?`<div class="nt" style="margin-top:6px">주식 분석 봇 마지막 갱신 ${B.stock.age_min}분 전</div>`:'';
-const analysis=tabs([['🇺🇸 미국',tabs([['시장',usmarket(A.usscan)],['추천',usrec(A.us)],['테슬라',tsla(A.tsla,B.tsla&&B.tsla.url)]],'ul')+st],['🇰🇷 한국',tabs([['수급',krflow(A.krflow)],['종목',krstock(A.kr)]],'ul')+st],['🪙 코인',tabs([['시장',coinmarket(A.coin&&A.coin.market)],['김프',coinkimp(A.coin&&A.coin.kimp)],['전략',coinstrat(A.coin&&A.coin.strategy)]],'ul')]],'sub');
+const analysis=tabs([['🇺🇸 미국',tabs([['시장',usmarket(A.usscan)],['추천',usrec(A.us)],['테슬라',tsla(A.tsla,B.tsla&&B.tsla.url)]],'ul')+st],['🇰🇷 한국',tabs([['수급',krflow(A.krflow)],['종목',krstock(A.kr)]],'ul')+st],['🪙 코인',tabs([['시장',coinmarket(A.coin&&A.coin.market)],['김프',coinkimp(A.coin&&A.coin.kimp)],['전략',coinstrat(A.coin&&A.coin.strategy)],['구간',coinregime(A.coin&&A.coin.regime)]],'ul')]],'sub');
 const auto=['kimp','btc'].filter(k=>B[k]).map(k=>{const b=B[k];const t=b.ret_pct!=null?`<div class="kv" style="margin:-4px 0 10px">${kv('원금 대비',(b.ret_pct>0?'+':'')+b.ret_pct+'%')}${kv(k==='btc'?'매매 기록':'완료 거래',b.trades==null?'-':b.trades+'회')}${kv('포지션',e(b.position||'-'))}</div>`:'';return card(b)+t}).join('');
 const td=s.todo||[];const dots=s.bots.map(b=>`<span class="tag">${I[b.state]||'⚪'} ${e(b.name)}</span>`).join('');
 const top=`<div class="card"><div class="nm">오늘 확인할 것</div>`+(td.length?td.map(t=>`<div class="it">${t.lvl==='red'?'🔴':'🟡'} <b>${e(t.bot)}</b> ${e(t.msg)}</div>`).join(''):`<div class="hl" style="font-size:14px;color:var(--tx)">✅ 확인할 것이 없어요</div>`)+`<div style="margin-top:8px">${dots}</div></div>`;
