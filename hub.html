@@ -78,6 +78,13 @@ return `<h2>코인 시장 구간 <span class="md">${e(a.asof)} 일봉 · 원화 
 <h2>김프 전략의 구간별 과거 성과 <span class="md">거래당 평균 손익 · 진입 전날 구간 기준</span></h2><div class="card"><table class="fl"><tr><th>구간</th><th>6년 거래</th><th>승률</th><th>6년 평균</th><th>올해 평균</th></tr>`+
 ['상승','하락','횡보'].map(k=>`<tr${k===a.cur?' style="font-weight:700"':''}><td>${ic[k]} ${k}</td><td>${H[k].n}</td><td>${H[k].win}%</td><td class="${cl(H[k].avg)}">${pc(H[k].avg)}</td><td class="${cl(H[k].avg26)}">${pc(H[k].avg26)} <span class="md">(${H[k].n26}건)</span></td></tr>`).join('')+
 `</table><div class="nt">참고용이에요. 구간별로 설정을 바꿔도 검증 구간(2024~26)에서는 이득이 거의 없어서 봇 설정은 그대로 둡니다.</div></div>`;}
+function coinmacro(a){if(!a||a.error)return '';const f=v=>v==null?'-':v;
+const h=a.halving||{};
+return `<h2>거시 지표 · 반감기 <span class="md">참고용 · 연준 공개 데이터</span></h2><div class="card"><div class="kv">${kv('달러지수 30일',a.dxy&&a.dxy.chg30!=null?pc(a.dxy.chg30):'-')}${kv('미국 10년 금리',a.us10y&&a.us10y.v!=null?a.us10y.v+'%':'-')}${kv('금리 30일 변화',a.us10y&&a.us10y.chg30!=null?(a.us10y.chg30>0?'+':'')+a.us10y.chg30+'%p':'-')}${kv('장단기 금리차',a.curve==null?'-':(a.curve>0?'+':'')+a.curve+'%p')}${kv('기준금리',a.ff&&a.ff.v!=null?a.ff.v+'%':'-')}${kv('M2 전년비',a.m2&&a.m2.yoy!=null?pc(a.m2.yoy):'-')}${kv('VIX',a.vix&&a.vix.v!=null?a.vix.v:'-')}</div>
+<div class="nt">6년 백테스트에서 이 지표들은 BTC 방향·김프 성과와 일관된 관계가 없었어요. 매매 규칙에는 쓰지 않고 참고만 합니다. (M2는 발표가 늦어 ${e(f(a.m2&&a.m2.asof))} 기준)</div></div>
+<div class="card"><div class="nm" style="font-size:15px">반감기 ${e(h.last||'')} 이후 ${h.months}개월 · 지금은 ${e(h.now||'')} 구간</div>
+<table class="fl"><tr><th>반감기 후</th><th>김프 거래</th><th>거래당 평균</th></tr>${(h.phase||[]).map(r=>`<tr${r.k===h.now?' style="font-weight:700"':''}><td>${r.k}</td><td>${r.n}</td><td class="${cl(r.avg)}">${pc(r.avg)}</td></tr>`).join('')}</table>
+<div class="nt">다음 반감기 ${e(h.next||'')}. 표본이 2번의 사이클뿐이라 참고만 하세요.</div></div>`;}
 function coinstrat(a){const x=err(a);if(x)return x;if(!a)return '<div class="card nt">자료 없음</div>';
 return `<h2>이동평균 신호 <span class="md">${e(a.asof)} 일봉 종가 기준</span></h2><div class="card"><div class="nt">종가가 이동평균 위면 보유, 아래면 현금 (비트봇 규칙)</div><table class="fl"><tr><th>이동평균</th><th>값</th><th>현재가 대비</th><th>신호</th></tr>`+
 a.signals.map(r=>`<tr><td>${r.n}일</td><td>${Math.round(r.ma/1e4).toLocaleString()}만</td><td class="${cl(r.gap)}">${pc(r.gap)}</td><td>${r.hold?'🟢 보유':'⚪ 현금'}</td></tr>`).join('')+`</table></div>
@@ -100,7 +107,7 @@ fetch('https://raw.githubusercontent.com/'+rp+'/data/hub.json?_='+Date.now(),{ca
 document.getElementById('u').textContent='갱신 '+s.ts+' (KST) · 금액·수량·보유 종목은 공개하지 않음';
 const B=Object.fromEntries(s.bots.map(b=>[b.id,b]));const A=s.analysis||{};
 const st=B.stock&&B.stock.age_min!=null?`<div class="nt" style="margin-top:6px">주식 분석 봇 마지막 갱신 ${B.stock.age_min}분 전</div>`:'';
-const analysis=tabs([['🇺🇸 미국',tabs([['시장',usmarket(A.usscan)],['추천',usrec(A.us)],['테슬라',tsla(A.tsla,B.tsla&&B.tsla.url)]],'ul')+st],['🇰🇷 한국',tabs([['수급',krflow(A.krflow)],['종목',krstock(A.kr)]],'ul')+st],['🪙 코인',tabs([['시장',coinmarket(A.coin&&A.coin.market)],['김프',coinkimp(A.coin&&A.coin.kimp)],['전략',coinstrat(A.coin&&A.coin.strategy)],['구간',coinregime(A.coin&&A.coin.regime)]],'ul')]],'sub');
+const analysis=tabs([['🇺🇸 미국',tabs([['시장',usmarket(A.usscan)],['추천',usrec(A.us)],['테슬라',tsla(A.tsla,B.tsla&&B.tsla.url)]],'ul')+st],['🇰🇷 한국',tabs([['수급',krflow(A.krflow)],['종목',krstock(A.kr)]],'ul')+st],['🪙 코인',tabs([['시장',coinmarket(A.coin&&A.coin.market)],['김프',coinkimp(A.coin&&A.coin.kimp)],['전략',coinstrat(A.coin&&A.coin.strategy)],['구간',coinregime(A.coin&&A.coin.regime)+coinmacro(A.coin&&A.coin.macro)]],'ul')]],'sub');
 const auto=['kimp','btc'].filter(k=>B[k]).map(k=>{const b=B[k];const t=b.ret_pct!=null?`<div class="kv" style="margin:-4px 0 10px">${kv('원금 대비',(b.ret_pct>0?'+':'')+b.ret_pct+'%')}${kv(k==='btc'?'매매 기록':'완료 거래',b.trades==null?'-':b.trades+'회')}${kv('포지션',e(b.position||'-'))}</div>`:'';return card(b)+t}).join('');
 const td=s.todo||[];const dots=s.bots.map(b=>`<span class="tag">${I[b.state]||'⚪'} ${e(b.name)}</span>`).join('');
 const top=`<div class="card"><div class="nm">오늘 확인할 것</div>`+(td.length?td.map(t=>`<div class="it">${t.lvl==='red'?'🔴':'🟡'} <b>${e(t.bot)}</b> ${e(t.msg)}</div>`).join(''):`<div class="hl" style="font-size:14px;color:var(--tx)">✅ 확인할 것이 없어요</div>`)+`<div style="margin-top:8px">${dots}</div></div>`;
