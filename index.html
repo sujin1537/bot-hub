@@ -168,12 +168,12 @@ function krstock(a){if(!a||a.error)return '<div class="card nt">자료 없음</d
 return `<div class="card"><div class="nm">관심 종목 등급</div>${a.rating.map(x=>`<div class="it"><span class="sym">${e(x.name||x.sym)}</span><span class="px">${e(x.sym)}</span> <span>${e(x.label)}</span></div>`).join('')}</div>`+
 (a.reentry.length?`<div class="card"><div class="nm">재진입 조건</div>${a.reentry.map(x=>`<div class="it"><span class="sym">${e(x.name||x.sym)}</span> <span>${x.on?'🟢 충족':'⚪ 미충족'}</span><div class="nt">${e(x.detail)}</div></div>`).join('')}</div>`:'');}
 function rcb(r){if(!r||r.error)return '<div class="card nt">자료 없음</div>';
-window._rc=[];const L=a=>(a||[]).map(x=>{if(typeof x==='string')return `<div class="it">• ${e(x)}</div>`;const i=window._rc.push(x)-1;return `<div class="it rcx" data-rc="${i}">• ${e(x.t)} <span class="rci">근거 ›</span></div>`}).join('');
+window._rc=[];const L=(a,b='•')=>(a||[]).map(x=>{if(typeof x==='string')return `<div class="it">${b} ${e(x)}</div>`;const i=window._rc.push(x)-1;return `<div class="it rcx" data-rc="${i}">${b} ${e(x.t)} <span class="rci">근거 ›</span></div>`}).join('');
 const sum=`<div class="card"><div class="nm">한눈에 <span class="md">${e(r.asof)} 기준</span></div>${L(r.oneline)}</div>`+
 (r.week?`<div class="card"><div class="nm">최근 요약 <span class="md">${e(r.week.range)}</span></div>${L(r.week.p)}</div>`:'');
 const mon=(r.months||[]).map(m=>`<div class="card"><div class="nm">${e(m.m)} <span class="md">${e(m.t)}</span></div>${L(m.p)}</div>`).join('');
 const dir=`<div class="card"><div class="nm">중장기 방향</div>${L(r.direction)}</div><div class="card"><div class="nm">체크 지표</div>${L(r.watch)}</div>`+
-`<div class="card"><div class="nm">적중 / 빗나감</div>${(r.hits||[]).map(x=>`<div class="it">✅ ${e(x)}</div>`).join('')}${(r.misses||[]).map(x=>`<div class="it">❌ ${e(x)}</div>`).join('')}<div class="nt">${e(r.src||'')}</div></div>`;
+`<div class="card"><div class="nm">적중 / 빗나감</div>${L(r.hits,'✅')}${L(r.misses,'❌')}<div class="nt">${e(r.src||'')}</div></div>`;
 return tabs([['요약',sum],['월별',mon],['방향',dir]],'ul');}
 fetch('https://raw.githubusercontent.com/'+rp+'/data/hub.json?_='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(s=>{
 document.getElementById('u').textContent='갱신 '+s.ts+' (KST) · 금액·수량·보유 종목은 공개하지 않음';
