@@ -1,58 +1,79 @@
 <!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>투자 허브</title><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap" rel="stylesheet"><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"><style>:root{--bg:#eef1ec;--card:#fbfcf9;--tx:#22302a;--mut:#6c786f;--ln:#dde3db;--ac:#2f6b57;--acs:#e1ece5;--tile:#f1f4ef;--up:#cf4b3b;--dn:#3a6ccc;--warn:#c8553d;--note:#b98a2e;--ok:#3f8f6b;--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100;--sh:0 1px 2px rgba(34,48,42,.04),0 6px 18px rgba(34,48,42,.05)}
-@media(prefers-color-scheme:dark){:root{--bg:#141916;--card:#1c231f;--tx:#e3e9e3;--mut:#93a299;--ln:#2b3530;--ac:#7cbfa3;--acs:#23332b;--tile:#222a25;--up:#f06e5e;--dn:#73a3ff;--warn:#ec7c62;--note:#d9ad55;--ok:#6cc39a;--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500;--sh:none}}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.6 "Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;letter-spacing:-.005em}
-main{max-width:660px;margin:0 auto;padding:28px 18px 72px}
+<title>투자 허브</title><link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"><style>:root{--bg:#f2f4f6;--card:#fff;--tx:#191f28;--sub:#4e5968;--mut:#8b95a1;--ln:#f2f4f6;--ac:#3182f6;--acs:#e8f3ff;--tile:#f9fafb;--up:#f04452;--dn:#3182f6;--warn:#f04452;--note:#ffb331;--ok:#00c471;--s1:#2a78d6;--s2:#eb6834;--s3:#1baf7a;--s4:#eda100}
+@media(prefers-color-scheme:dark){:root{--bg:#101012;--card:#1c1c21;--tx:#f2f2f4;--sub:#c3c5cb;--mut:#878a93;--ln:#28282e;--ac:#4d96ff;--acs:#1c2a44;--tile:#25252b;--up:#ff5c6b;--dn:#4d96ff;--warn:#ff5c6b;--note:#ffc455;--ok:#21d184;--s1:#3987e5;--s2:#d95926;--s3:#199e70;--s4:#c98500}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 "Pretendard Variable",Pretendard,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;letter-spacing:-.02em;word-break:keep-all}
+main{max-width:600px;margin:0 auto;padding:20px 16px 80px}
 button:focus-visible,a:focus-visible,[data-rc]:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
-.hd{margin:4px 2px 22px}.hb{font-size:13px;color:var(--mut);font-weight:600;margin-bottom:10px;display:flex;align-items:center;gap:8px}.hb i{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block}
-.hi{font-family:"Gowun Batang",serif;font-size:27px;line-height:1.35;font-weight:700;letter-spacing:-.02em;margin:0}
-.hs{font-size:15px;color:var(--mut);margin-top:6px;max-width:34em}.hs b{color:var(--tx);font-weight:650}
-.upd{color:var(--mut);font-size:12px;margin-top:10px;opacity:.85}
+.hd{padding:20px 8px 24px}.hb{font-size:14px;color:var(--mut);font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px}.hb i{display:none}
+.hi{font-size:26px;line-height:1.38;font-weight:700;letter-spacing:-.03em;margin:0}
+.hs{font-size:17px;color:var(--sub);margin-top:8px;line-height:1.5}.hs b{color:var(--ac);font-weight:700}
+.upd{color:var(--mut);font-size:13px;margin-top:10px}
 h1{display:none}
-.card{background:var(--card);border:1px solid var(--ln);border-radius:16px;padding:16px 18px;margin-bottom:12px;box-shadow:var(--sh)}
-.nm{font-weight:650;font-size:15px}.md{color:var(--mut);font-size:12.5px;margin-left:6px;font-weight:400}
-.today .nm{font-family:"Gowun Batang",serif;font-size:17px;margin-bottom:6px}
-.today .it{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:baseline;padding:10px 0;border-top:1px solid var(--ln);font-size:14px}
-.today .it:first-of-type{border-top:0}
-.today .it .lv{width:6px;height:6px;border-radius:50%;background:var(--note);transform:translateY(-2px)}.today .it.red .lv{background:var(--warn)}
-.today .it b{font-weight:650;font-size:12.5px;color:var(--mut);display:block}.today .it .ms{grid-column:2}
-.today .clear{font-size:15px;padding:6px 0;color:var(--tx)}
-.bots{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;padding-top:12px;border-top:1px solid var(--ln)}
-.tag{display:inline-flex;align-items:center;gap:6px;padding:3px 10px 3px 8px;border-radius:99px;background:var(--tile);font-size:12.5px;color:var(--tx)}
+.card{background:var(--card);border:0;border-radius:22px;padding:22px 22px;margin-bottom:12px}
+.nm{font-weight:700;font-size:16px}.md{color:var(--mut);font-size:13px;margin-left:6px;font-weight:500}
+.today .nm{font-size:19px;margin-bottom:8px}
+.today .it{display:grid;grid-template-columns:36px 1fr;gap:0 12px;align-items:center;padding:12px 0;border:0;font-size:15px}
+.today .it .lv{grid-row:span 2;width:36px;height:36px;border-radius:50%;background:#fff3db;position:relative}.today .it .lv:after{content:"";position:absolute;inset:13px;border-radius:50%;background:var(--note)}
+.today .it.red .lv{background:#ffeef0}.today .it.red .lv:after{background:var(--warn)}
+@media(prefers-color-scheme:dark){.today .it .lv{background:#3a2f17}.today .it.red .lv{background:#3d1d22}}
+.today .it b{font-weight:600;font-size:13px;color:var(--mut);display:block}.today .it .ms{grid-column:2;color:var(--tx);line-height:1.45}
+.today .clear{font-size:17px;padding:6px 0;color:var(--sub)}
+.bots{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+.tag{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:99px;background:var(--tile);font-size:13px;font-weight:600;color:var(--sub)}
 .tag i{width:7px;height:7px;border-radius:50%;background:var(--mut)}.tag i.g{background:var(--ok)}.tag i.y{background:var(--note)}.tag i.r{background:var(--warn)}
-.tabs{display:flex;gap:4px;margin:22px 0 14px;padding:4px;background:var(--tile);border:1px solid var(--ln);border-radius:14px}
-.tabs button{flex:1;padding:9px 0;border:0;background:none;color:var(--mut);border-radius:10px;font:inherit;font-weight:650;cursor:pointer}
-.tabs button.on{background:var(--card);color:var(--tx);box-shadow:0 1px 3px rgba(34,48,42,.12)}
-.sub{display:flex;gap:6px;margin:0 0 12px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}.sub::-webkit-scrollbar{display:none}
-.sub button{flex:none;padding:7px 15px;border:1px solid var(--ln);background:var(--card);color:var(--mut);border-radius:99px;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}
-.sub button.on{background:var(--acs);color:var(--ac);border-color:transparent}
-.ul{display:flex;gap:20px;border-bottom:1px solid var(--ln);margin:4px 2px 14px;overflow-x:auto;scrollbar-width:none}.ul::-webkit-scrollbar{display:none}
-.ul button{flex:none;background:none;border:0;border-bottom:2px solid transparent;padding:7px 0;margin-bottom:-1px;font:inherit;font-size:14px;font-weight:600;color:var(--mut);cursor:pointer}
-.ul button.on{color:var(--tx);border-color:var(--ac)}
+.tabs{display:flex;gap:0;margin:22px 0 12px;padding:4px;background:#e5e8eb;border-radius:14px}
+@media(prefers-color-scheme:dark){.tabs{background:#25252b}}
+.tabs button{flex:1;padding:10px 0;border:0;background:none;color:var(--sub);border-radius:11px;font:inherit;font-size:15px;font-weight:600;cursor:pointer;transition:background .15s}
+.tabs button.on{background:var(--card);color:var(--tx);font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.sub{display:flex;gap:8px;margin:0 0 14px;overflow-x:auto;scrollbar-width:none;padding:2px 2px 4px}.sub::-webkit-scrollbar{display:none}
+.sub button{flex:none;padding:8px 16px;border:0;background:var(--card);color:var(--sub);border-radius:99px;font:inherit;font-size:14px;font-weight:600;cursor:pointer}
+.sub button.on{background:var(--tx);color:var(--card)}
+.ul{display:flex;gap:22px;margin:6px 6px 14px;overflow-x:auto;scrollbar-width:none;border:0}.ul::-webkit-scrollbar{display:none}
+.ul button{flex:none;background:none;border:0;border-bottom:2px solid transparent;padding:6px 0;font:inherit;font-size:16px;font-weight:600;color:var(--mut);cursor:pointer}
+.ul button.on{color:var(--tx);font-weight:700;border-color:var(--tx)}
 .row{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.st{font-size:13px;white-space:nowrap}.hl{color:var(--mut);font-size:13.5px;margin-top:4px}
-h2{font-family:"Gowun Batang",serif;font-size:16px;margin:22px 4px 10px;color:var(--tx);font-weight:700}h2:first-child{margin-top:4px}h2 .md{font-family:"Pretendard Variable",Pretendard,sans-serif}
-.kv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.kv div{background:var(--tile);border-radius:10px;padding:8px 10px;font-size:12px;color:var(--mut)}.kv b{display:block;color:var(--tx);font-size:15px;font-weight:650}
-details{border-top:1px solid var(--ln);padding:8px 0}details:first-of-type{border-top:0}summary{cursor:pointer;font-weight:650;padding:4px 0}
-.it{padding:8px 0 8px 2px;border-top:1px solid var(--ln)}.it:first-of-type{border-top:0}.sym{font-weight:650}.px{color:var(--mut);font-size:13px;margin-left:6px}.nt{color:var(--mut);font-size:12.5px;line-height:1.55}
-a.card{display:block;color:inherit;text-decoration:none}a.card:hover{border-color:var(--ac)}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.two .card{margin:0}.li{display:flex;justify-content:space-between;gap:6px;font-size:13px;padding:4px 0}.li span:last-child{font-weight:650;white-space:nowrap}
+.st{font-size:14px;white-space:nowrap;font-weight:600}.hl{color:var(--sub);font-size:14px;margin-top:4px}
+h2{font-size:19px;margin:28px 8px 12px;color:var(--tx);font-weight:700;letter-spacing:-.03em}h2:first-child{margin-top:6px}
+.kv{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.kv div{background:var(--tile);border-radius:14px;padding:12px 14px;font-size:13px;color:var(--mut);font-weight:500}.kv b{display:block;color:var(--tx);font-size:17px;font-weight:700;margin-top:2px}
+details{padding:8px 0}summary{cursor:pointer;font-weight:700;padding:4px 0}
+.it{padding:10px 0;border:0}.sym{font-weight:700}.px{color:var(--mut);font-size:13px;margin-left:6px;font-weight:500}.nt{color:var(--mut);font-size:13px;line-height:1.55}
+a.card{display:block;color:inherit;text-decoration:none}a.card:active{transform:scale(.99)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}.two .card{margin:0}.li{display:flex;justify-content:space-between;gap:6px;font-size:14px;padding:5px 0}.li span:last-child{font-weight:700;white-space:nowrap}
 .upc{color:var(--up)}.dnc{color:var(--dn)}
-table.fl{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}table.fl th,table.fl td{padding:6px 2px;text-align:right;border-top:1px solid var(--ln)}table.fl tr:first-child th{border-top:0}table.fl th:first-child,table.fl td:first-child{text-align:left}table.fl th{color:var(--mut);font-weight:600;font-size:12px}table.fl tr.sum td{font-weight:650}
-.lcw{position:relative}.lct{position:absolute;display:none;pointer-events:none;background:var(--card);border:1px solid var(--ln);border-radius:10px;padding:7px 10px;font-size:12px;line-height:1.5;box-shadow:0 6px 18px rgba(0,0,0,.12);white-space:nowrap;z-index:5}.lcg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--mut);margin:2px 0 6px}.lcg i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}.bar{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:6px 0;gap:2px}.bar i{display:block}
-.rcx{cursor:pointer;border-radius:8px}.rcx:hover{background:var(--tile)}.rci{color:var(--ac);font-size:12px;font-weight:650;white-space:nowrap}
-#rcm{position:fixed;inset:0;background:rgba(20,28,24,.42);display:flex;align-items:flex-end;justify-content:center;z-index:50;padding:12px}#rcm[hidden]{display:none}
-#rcm .rcw{background:var(--card);color:var(--tx);border:1px solid var(--ln);border-radius:20px 20px 16px 16px;max-width:580px;width:100%;max-height:82vh;overflow:auto;padding:18px 20px 20px;box-shadow:0 12px 40px rgba(0,0,0,.18);animation:up .22s ease-out}
-#rcm .rcw .nm{font-family:"Gowun Batang",serif;font-size:17px;line-height:1.45}
-#rcm .rcc{float:right;border:0;background:var(--tile);color:var(--mut);width:30px;height:30px;border-radius:50%;font-size:18px;cursor:pointer;line-height:1;margin:-4px -6px 0 8px}
-@keyframes up{from{transform:translateY(16px);opacity:0}to{transform:none;opacity:1}}
-.pkl{padding:4px 14px}.pk{display:grid;grid-template-columns:1fr 92px 64px;align-items:center;gap:10px;padding:11px 4px;border-top:1px solid var(--ln)}.pk:first-child{border-top:0}.pkn{min-width:0}.pkn .nt{margin-top:1px}.pkp{text-align:right;font-weight:700;font-size:15px}.pkc .lct{top:4px}
-@media(max-width:380px){.pk{grid-template-columns:1fr 64px 58px}.pks svg{width:64px}}
-@media(prefers-reduced-motion:reduce){#rcm .rcw{animation:none}}
-@media(min-width:700px){#rcm{align-items:center}#rcm .rcw{border-radius:18px}main{padding-top:40px}.hi{font-size:30px}}
+table.fl{width:100%;border-collapse:collapse;font-size:14px;margin-top:6px}table.fl th,table.fl td{padding:8px 2px;text-align:right}table.fl th:first-child,table.fl td:first-child{text-align:left}table.fl th{color:var(--mut);font-weight:500;font-size:13px}table.fl tr.sum td{font-weight:700;border-top:1px solid var(--ln)}
+.lcw{position:relative}.lct{position:absolute;display:none;pointer-events:none;background:var(--tx);color:var(--card);border-radius:10px;padding:7px 10px;font-size:12px;line-height:1.45;white-space:nowrap;z-index:5}.lcg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--mut);margin:2px 0 6px}.lcg i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}.bar{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:6px 0;gap:2px}.bar i{display:block}
+.rcx{cursor:pointer;border-radius:12px;transition:background .12s}.rcx:hover{background:var(--tile)}.rcx:active{background:var(--ln)}.rci{color:var(--ac);font-size:13px;font-weight:600;white-space:nowrap}
+#rcm{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:flex-end;justify-content:center;z-index:50;padding:0}#rcm[hidden]{display:none}
+#rcm .rcw{background:var(--card);color:var(--tx);border:0;border-radius:26px 26px 0 0;max-width:600px;width:100%;max-height:86vh;overflow:auto;padding:26px 22px 30px;animation:up .26s cubic-bezier(.2,.8,.2,1)}
+#rcm .rcw .nm{font-size:21px;line-height:1.4;letter-spacing:-.03em}
+#rcm .rcc{float:right;border:0;background:var(--tile);color:var(--sub);width:32px;height:32px;border-radius:50%;font-size:18px;cursor:pointer;line-height:1;margin:-2px -4px 0 8px}
+@keyframes up{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.page{animation:fd .18s ease-out}@keyframes fd{from{opacity:.4}to{opacity:1}}
+.bn{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-top:1px solid var(--ln);padding:6px 8px calc(6px + env(safe-area-inset-bottom));z-index:40}
+.bn button{flex:1;max-width:120px;display:flex;flex-direction:column;align-items:center;gap:2px;border:0;background:none;color:var(--mut);font:inherit;font-size:11.5px;font-weight:600;padding:6px 0;cursor:pointer;border-radius:12px}
+.bn button.on{color:var(--tx)}.bn button:active{background:var(--tile)}
+main{padding-bottom:110px}
+.pt{padding:18px 8px 16px}.ph{display:block;font-size:26px;font-weight:700;letter-spacing:-.03em;margin:0}.pd{color:var(--mut);font-size:14px;margin-top:4px}
+.ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.ch .nm{font-size:18px}
+.cnt{display:inline-block;min-width:22px;padding:0 7px;border-radius:99px;background:var(--acs);color:var(--ac);font-size:13px;text-align:center;margin-left:4px;vertical-align:2px}
+.more{border:0;background:none;color:var(--mut);font:inherit;font-size:14px;font-weight:600;cursor:pointer;padding:4px 2px}
+.today .more{width:100%;margin-top:6px;padding:12px;border-radius:14px;background:var(--tile);color:var(--sub)}
+.bots .tag{border:0;font:inherit;font-size:13px;font-weight:600;cursor:pointer}.tag .ts{color:var(--mut);font-weight:500;margin-left:2px}
+.mini .mr{display:flex;justify-content:space-between;padding:9px 0;font-size:15px}.mini .mr b{font-weight:700}
+.seg{display:flex;gap:0;margin:0 0 14px;padding:4px;background:#e5e8eb;border-radius:14px}.seg button{flex:1;padding:10px 0;border:0;background:none;color:var(--sub);border-radius:11px;font:inherit;font-size:15px;font-weight:600;cursor:pointer}.seg button.on{background:var(--card);color:var(--tx);font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+@media(prefers-color-scheme:dark){.seg{background:#25252b}}
+.pill{font-size:13px;font-weight:700;padding:5px 11px;border-radius:99px;background:var(--tile);color:var(--sub);white-space:nowrap}.pill.g{background:#e5f8ef;color:#00a661}.pill.y{background:#fff3db;color:#c98a00}.pill.r{background:#ffeef0;color:var(--warn)}
+@media(prefers-color-scheme:dark){.pill.g{background:#173528;color:var(--ok)}.pill.y{background:#3a2f17;color:var(--note)}.pill.r{background:#3d1d22}}
+.bc .hl{margin-top:10px;color:var(--sub)}.lk{display:block;text-align:center;margin-top:14px;padding:12px;border-radius:14px;background:var(--acs);color:var(--ac);font-weight:700;text-decoration:none}
+.upd{text-align:center;margin:18px 0 0}
+.big{font-size:28px;font-weight:700;letter-spacing:-.03em}.big span{font-size:17px;margin-left:4px}.side{font-size:14px;color:var(--sub);margin-top:4px}.side span{color:var(--mut);margin-left:6px}
+@media(prefers-reduced-motion:reduce){#rcm .rcw,.page{animation:none}}
+.pkl{padding:8px 10px}.pk{display:grid;grid-template-columns:1fr 84px 76px;align-items:center;gap:10px;padding:12px 12px;border:0}.pkn{min-width:0}.pkn .sym{font-size:16px}.pkn .px{display:none}.pkn .nt{margin-top:1px}.pkp{text-align:right;font-weight:700;font-size:15px;line-height:1.3}.pkp small{display:block;color:var(--mut);font-weight:500;font-size:12.5px}
+@media(max-width:380px){.pk{grid-template-columns:1fr 60px 70px}.pks svg{width:60px}}
+@media(min-width:700px){#rcm{align-items:center;padding:16px}#rcm .rcw{border-radius:26px}main{padding-top:36px}.hi{font-size:30px}}
 @media(max-width:420px){.kv{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}}
-</style></head><body><main><div id="rcm" hidden><div class="rcw"><button class="rcc" aria-label="닫기">×</button><div class="rcb"></div></div></div><header class="hd"><div class="hb"><i></i>투자 허브</div><p class="hi" id="hi">안녕하세요</p><div class="hs" id="hs">오늘 상황을 불러오고 있어요</div><div class="upd" id="u"></div></header><div id="root"></div>
+</style></head><body><main><div id="rcm" hidden><div class="rcw"><button class="rcc" aria-label="닫기">×</button><div class="rcb"></div></div></div><div id="root"><div class="hd"><p class="hi">불러오는 중이에요</p></div></div>
 <script>
 const rp=location.hostname.split('.')[0]+'/'+location.pathname.split('/')[1];
 const I={"정상":"🟢","확인됨":"🟢","지연":"🟡","멈춤":"🔴","일시정지":"⏸","미가동":"⚪","오래됨":"🟡","읽기 실패":"🔴"};
@@ -61,7 +82,7 @@ let gid=0;
 function tabs(items,cls){const g='g'+(gid++);return `<div class="${cls}">`+items.map((x,i)=>`<button data-g="${g}" data-i="${i}" class="${i?'':'on'}">${x[0]}</button>`).join('')+`</div>`+items.map((x,i)=>`<div class="pane" data-g="${g}" data-i="${i}"${i?' hidden':''}>${x[1]}</div>`).join('');}
 document.addEventListener('click',ev=>{const b=ev.target.closest('button[data-g]');if(!b)return;const g=b.dataset.g,i=b.dataset.i;
 document.querySelectorAll(`[data-g="${g}"]`).forEach(el=>{if(el.tagName==='BUTTON')el.className=el.dataset.i===i?'on':'';else el.hidden=el.dataset.i!==i;});
-try{history.replaceState(null,'','#'+(window._p=(window._p||{}),window._p[g]=i,Object.values(window._p).join('')))}catch(_){}});
+});
 document.addEventListener('click',ev=>{const t=ev.target.closest('[data-rc]');const m=document.getElementById('rcm');
 if(t){const x=window._rc[+t.dataset.rc];m.querySelector('.rcb').innerHTML=`<div class="nm" style="margin-bottom:6px">${e(x.t)}</div>`+(x.html||'')+(x.html&&(x.why||[]).length?'<div class="nm" style="margin:14px 0 4px;font-size:15px">왜 좋게 봤나</div>':'')+(x.why||[]).map(w=>`<div class="it">• ${e(w)}</div>`).join('')+((x.src||[]).length?`<div class="nm" style="margin:12px 0 4px">근거 글 <span class="md">구독자 로그인 필요</span></div>`+x.src.map(s=>`<a class="it" style="display:block;color:var(--ac);text-decoration:none" href="${e(s.u)}" target="_blank" rel="noopener">${e(s.d)} · ${e(s.t)} ↗</a>`).join(''):'');m.hidden=false;return;}
 if(m&&!m.hidden&&(ev.target===m||ev.target.closest('.rcc')))m.hidden=true;});
@@ -112,12 +133,16 @@ const t=document.getElementById(id+'t');t.innerHTML=`<div style="color:var(--mut
 function spark(a,L){const n=a.length,pts=a.map((v,i)=>[-24+i*24/(n-1),v]),all=a.concat(L.map(l=>l.v)),mn=Math.min(...all),mx=Math.max(...all),pad=(mx-mn)*0.12||0.2,lo=Math.floor((mn-pad)*10)/10,hi=Math.ceil((mx+pad)*10)/10,st=(hi-lo)/4,tk=[0,1,2,3,4].map(k=>+(lo+st*k).toFixed(2));
 return lc({H:230,x:{min:-24,max:0,ticks:[-24,-18,-12,-6,0],fmt:v=>v===0?'지금':v+'시간',tip:v=>v===0?'지금':Math.abs(Math.round(v*10)/10)+'시간 전'},y:{min:lo,max:hi,ticks:tk,fmt:v=>v.toFixed(1)+'%',tip:v=>v.toFixed(2)+'%'},
 series:[{n:'김프',c:'var(--s1)',w:2.4,pts}],hlines:L.map(l=>({y:l.v,c:l.c,t:l.t+' '+l.v+'%'})),marks:[{x:0,y:a[n-1],c:'var(--s1)'}]});}
-function coinmarket(a){const x=err(a);if(x)return x;const b=a.btc||{};
+function coinmarket(a){const x=err(a);if(x)return x;const b=a.btc||{},u=a.usd;
 const li=l=>l.map(r=>`<div class="li"><span>${e(r.sym)} <span class="md">${e(r.name)}</span></span><span class="${cl(r.chg)}">${pc(r.chg)}</span></div>`).join('');
-const tr=Object.keys(a.trend||{}).map(n=>`<tr><td>${n}일선</td><td>${Math.round(a.trend[n].ma/1e4).toLocaleString()}만</td><td class="${cl(a.trend[n].gap)}">${pc(a.trend[n].gap)}</td><td>${a.trend[n].gap>0?'위':'아래'}</td></tr>`).join('');
-return `<h2>비트코인 <span class="md">업비트 · 일봉 이동평균은 빗썸 기준</span></h2><div class="card"><div class="kv">${kv('현재가',b.px?Math.round(b.px/1e4).toLocaleString()+'만':'-')}${kv('24시간',b.chg==null?'-':pc(b.chg))}${kv('RSI(14일)',a.rsi==null?'-':a.rsi)}</div>
-<table class="fl"><tr><th>이동평균</th><th>값</th><th>현재가 대비</th><th></th></tr>${tr}</table></div>
-<h2>업비트 시장 <span class="md">원화 ${a.n}종목</span></h2><div class="card"><div class="kv">${kv('거래대금 상위 50 중 상승',a.up_pct+'%')}${kv('평균 등락',pc(a.avg_chg))}${kv('종목 수',a.n)}</div></div>
+const man=v=>Math.round(v/1e4).toLocaleString()+'만 원';
+let top;if(u){const tr=Object.keys(u.trend||{}).map(n=>`<tr><td>${n}일선</td><td>$${u.trend[n].ma.toLocaleString()}</td><td class="${cl(u.trend[n].gap)}">${pc(u.trend[n].gap)}</td><td>${u.trend[n].gap>0?'위':'아래'}</td></tr>`).join('');
+top=`<h2>비트코인 <span class="md">달러 기준 · ${e(u.src)}</span></h2><div class="card"><div class="big">$${u.px.toLocaleString()} <span class="${cl(u.chg)}">${u.chg==null?'':pc(u.chg)}</span></div>${u.krw?`<div class="side">원화 환산 약 ${man(u.krw)} <span>환율 ${u.fx.toLocaleString()}원</span></div>`:''}${u.upbit?`<div class="side">업비트 실거래 ${man(u.upbit)} <span>김프 ${u.kimp>0?'+':''}${u.kimp}%</span></div>`:''}
+<div class="kv">${kv('24시간',u.chg==null?'-':pc(u.chg))}${kv('RSI(14일)',u.rsi==null?'-':u.rsi)}${kv('200일선 대비',u.trend&&u.trend['200']?pc(u.trend['200'].gap):'-')}</div>
+<table class="fl"><tr><th>이동평균</th><th>값</th><th>현재가 대비</th><th></th></tr>${tr}</table><div class="nt" style="margin-top:8px">환율과 김프에 흔들리지 않게 달러로 봐요. 원화 값은 참고용이에요.</div></div>`;}
+else{const tr=Object.keys(a.trend||{}).map(n=>`<tr><td>${n}일선</td><td>${Math.round(a.trend[n].ma/1e4).toLocaleString()}만</td><td class="${cl(a.trend[n].gap)}">${pc(a.trend[n].gap)}</td><td>${a.trend[n].gap>0?'위':'아래'}</td></tr>`).join('');
+top=`<h2>비트코인 <span class="md">달러 시세를 못 받아 업비트 원화 기준</span></h2><div class="card"><div class="kv">${kv('현재가',b.px?Math.round(b.px/1e4).toLocaleString()+'만':'-')}${kv('24시간',b.chg==null?'-':pc(b.chg))}${kv('RSI(14일)',a.rsi==null?'-':a.rsi)}</div><table class="fl"><tr><th>이동평균</th><th>값</th><th>현재가 대비</th><th></th></tr>${tr}</table></div>`;}
+return top+`<h2>업비트 시장 <span class="md">원화 ${a.n}종목</span></h2><div class="card"><div class="kv">${kv('거래대금 상위 50 중 상승',a.up_pct+'%')}${kv('평균 등락',pc(a.avg_chg))}${kv('종목 수',a.n)}</div></div>
 <h2>24시간 거래대금 TOP10 <span class="md">억 원</span></h2><div class="card">${a.top_amt.map(r=>`<div class="li"><span>${e(r.sym)} <span class="md">${e(r.name)}</span></span><span>${r.amt.toLocaleString()} <span class="${cl(r.chg)}">${pc(r.chg)}</span></span></div>`).join('')}</div>
 <h2>많이 움직인 코인 <span class="md">거래대금 상위 50 중</span></h2><div class="two"><div class="card"><div class="nm" style="font-size:13px">상승 TOP</div>${li(a.up)}</div><div class="card"><div class="nm" style="font-size:13px">하락 TOP</div>${li(a.down)}</div></div>`;}
 function coinkimp(a){const x=err(a);if(x)return x;if(!a)return '<div class="card nt">자료 없음</div>';
@@ -205,11 +230,11 @@ return `<div class="lcw pkc" data-s='${JSON.stringify(s)}' data-pd="${pd}"><svg 
 return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" aria-hidden="true">${g}</svg>`;}
 function picks(P){if(!P||P.error)return '<div class="card nt">유망종목 시세를 아직 못 불러왔어요. 몇 분 뒤에 다시 보세요.</div>';
 const ok=P.filter(x=>x.pct!=null),up=ok.filter(x=>x.pct>0).length,sorted=[...ok].sort((a,b)=>a.pct-b.pct),med=sorted.length?sorted[Math.floor(sorted.length/2)].pct:null;
-const head=`<div class="card"><div class="nm" style="font-family:'Gowun Batang',serif;font-size:17px">언급한 종목 ${P.length}개</div><div class="hl" style="font-size:14px">그중 <b class="upc">${up}개</b>가 처음 긍정적으로 언급한 날보다 올라 있어요.${med!=null?` 가운데 값은 <b class="${cl(med)}">${pc(med)}</b>예요.`:''}</div><div class="nt" style="margin-top:6px">회색 선은 언급 전, 색 선은 언급 이후예요. 종목을 누르면 근거와 큰 차트가 나와요.</div></div>`;
+const head=`<div class="card"><div class="nm" style="font-size:19px">언급한 종목 ${P.length}개</div><div class="hl" style="font-size:14px">그중 <b class="upc">${up}개</b>가 처음 긍정적으로 언급한 날보다 올라 있어요.${med!=null?` 가운데 값은 <b class="${cl(med)}">${pc(med)}</b>예요.`:''}</div><div class="nt" style="margin-top:6px">회색 선은 언급 전, 색 선은 언급 이후예요. 종목을 누르면 근거와 큰 차트가 나와요.</div></div>`;
 const G=[['코어','오래 들고 가는 핵심'],['성장','성장 기대 종목'],['관찰','조건을 보며 지켜보는 종목']];
 const fx=(r)=>r.mk==='kr'?Math.round(r.px).toLocaleString()+'원':'$'+(r.px>=1000?Math.round(r.px).toLocaleString():r.px);
 const row=r=>{const i=window._rc.push({t:`${r.name} (${r.sym})`,html:r.pct==null?'<div class="nt">시세를 못 불러왔어요.</div>':spk(r,520,170,true)+`<div class="kv">${kv('언급일 '+r.rec_d.slice(5).replace('-','/'),fx({...r,px:r.rec_px}))}${kv('지금',fx(r))}${kv('수익률',`<span class="${cl(r.pct)}">${pc(r.pct)}</span>`)}</div>`+(r.bench_pct!=null?`<div class="nt" style="margin-top:8px">같은 기간 ${r.bench} ${pc(r.bench_pct)} → ${r.pct>=r.bench_pct?'시장보다 <b class="upc">'+pc(Math.round((r.pct-r.bench_pct)*10)/10)+'p</b> 더 좋았어요':'시장보다 <b class="dnc">'+pc(Math.round((r.pct-r.bench_pct)*10)/10)+'p</b> 덜 했어요'}</div>`:'')+(r.late?'<div class="nt">언급일에 거래가 없어서 첫 거래일 가격으로 계산했어요.</div>':'')+`<div class="nt" style="margin-top:4px">시각: ${e(r.tone)}</div>`,why:r.why,src:r.src})-1;
-return `<div class="pk rcx" data-rc="${i}" tabindex="0"><div class="pkn"><span class="sym">${e(r.name)}</span><span class="px">${e(r.sym.replace('-USD',''))}</span><div class="nt">${r.date.slice(5).replace('-','/')} 언급 · ${e(r.tone)}</div></div><div class="pks">${r.pct==null?'':spk(r,92,30,false)}</div><div class="pkp ${cl(r.pct)}">${r.pct==null?'<span class="nt">시세 없음</span>':pc(r.pct)}</div></div>`;};
+return `<div class="pk rcx" data-rc="${i}" tabindex="0"><div class="pkn"><span class="sym">${e(r.name)}</span><div class="nt">${r.date.slice(5).replace('-','/')}에 ${e(r.tone)}</div></div><div class="pks">${r.pct==null?'':spk(r,92,30,false)}</div><div class="pkp ${cl(r.pct)}">${r.pct==null?'<span class="nt">시세 없음</span>':`<small>${fx(r)}</small>${pc(r.pct)}`}</div></div>`;};
 return head+G.map(([g,d])=>{const L=P.filter(x=>x.g===g).sort((a,b)=>(b.pct??-999)-(a.pct??-999));return L.length?`<h2>${g} <span class="md">${d}</span></h2><div class="card pkl">${L.map(row).join('')}</div>`:''}).join('')+`<div class="nt" style="margin:4px 4px 0">기준은 그가 쓴 글 중 처음 긍정적으로 언급한 날의 종가예요. 추천 시점은 제가 글을 읽고 정리한 것이라 실제 매수 시점과 다를 수 있어요.</div>`;}
 document.addEventListener('keydown',ev=>{if(ev.key==='Enter'&&ev.target.matches&&ev.target.matches('[data-rc]'))ev.target.click();if(ev.key==='Escape'){const m=document.getElementById('rcm');if(m)m.hidden=true;}});
 document.addEventListener('mousemove',ev=>{const c=ev.target.closest&&ev.target.closest('.pkc');if(!c)return;const s=JSON.parse(c.dataset.s),pd=+c.dataset.pd,sv=c.querySelector('svg'),bx=sv.getBoundingClientRect(),w=sv.viewBox.baseVal.width;const x=(ev.clientX-bx.left)/bx.width*w;const i=Math.max(0,Math.min(s.length-1,Math.round((x-pd)/(w-2*pd)*(s.length-1))));const ln=c.querySelector('.pkx'),X=(i/(s.length-1))*(w-2*pd)+pd;ln.setAttribute('x1',X);ln.setAttribute('x2',X);ln.setAttribute('opacity',1);const t=c.querySelector('.lct');t.style.display='block';t.innerHTML=`20${s[i][0].slice(0,2)}.${s[i][0].slice(2,4)}.${s[i][0].slice(4)}<br><b>${s[i][1].toLocaleString()}</b>`;const px=X/w*bx.width;t.style.left=Math.min(bx.width-90,Math.max(0,px+8))+'px';t.style.top='4px';});
@@ -223,17 +248,30 @@ const dir=`<div class="card"><div class="nm">중장기 방향</div>${L(r.directi
 `<div class="card"><div class="nm">적중 / 빗나감</div>${L(r.hits,'✅')}${L(r.misses,'❌')}<div class="nt">${e(r.src||'')}</div></div>`;
 return tabs([['요약',sum],['유망종목',picks(window._picks)],['월별',mon],['방향',dir]],'ul');}
 fetch('https://raw.githubusercontent.com/'+rp+'/data/hub.json?_='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(s=>{
-document.getElementById('u').textContent=s.ts+' 기준으로 5분마다 새로 고쳐져요';
-const B=Object.fromEntries(s.bots.map(b=>[b.id,b]));const A=s.analysis||{};
-const st=B.stock&&B.stock.age_min!=null?`<div class="nt" style="margin-top:6px">주식 분석 봇 마지막 갱신 ${B.stock.age_min}분 전</div>`:'';
-const analysis=tabs([['🇺🇸 미국',tabs([['시장',usmarket(A.usscan)],['추천',usrec(A.us)],['테슬라',tsla(A.tsla,B.tsla&&B.tsla.url)]],'ul')+st],['🇰🇷 한국',tabs([['수급',krflow(A.krflow)],['종목',krstock(A.kr)]],'ul')+st],['🪙 코인',tabs([['시장',coinmarket(A.coin&&A.coin.market)],['김프',coinkimp(A.coin&&A.coin.kimp)],['전략',coinstrat(A.coin&&A.coin.strategy)],['구간',coinregime(A.coin&&A.coin.regime)+coincycle(A.coin&&A.coin.cycle)+coinmacro(A.coin&&A.coin.macro)]],'ul')],['🐔 치킨보이',(window._picks=A.picks,rcb(A.rcb))]],'sub');
-const auto=['kimp','btc'].filter(k=>B[k]).map(k=>{const b=B[k];const t=b.ret_pct!=null?`<div class="kv" style="margin:-4px 0 10px">${kv('원금 대비',(b.ret_pct>0?'+':'')+b.ret_pct+'%')}${kv(k==='btc'?'매매 기록':'완료 거래',b.trades==null?'-':b.trades+'회')}${kv('포지션',e(b.position||'-'))}</div>`:'';return card(b)+t}).join('');
-const td=s.todo||[];const dc=st=>({"정상":"g","확인됨":"g","지연":"y","일시정지":"y","오래됨":"y","멈춤":"r","읽기 실패":"r"}[st]||'');
-const dots=s.bots.map(b=>`<span class="tag" title="${e(b.state)}"><i class="${dc(b.state)}"></i>${e(b.name)}</span>`).join('');
-const red=td.filter(t=>t.lvl==='red').length,okb=s.bots.filter(b=>dc(b.state)==='g').length;
-const hr=+(s.ts||'').slice(11,13);document.getElementById('hi').textContent=hr>=5&&hr<11?'좋은 아침이에요':hr>=11&&hr<17?'좋은 오후예요':hr>=17&&hr<22?'좋은 저녁이에요':'늦은 시간까지 수고 많아요';
-document.getElementById('hs').innerHTML=`봇 ${s.bots.length}개 중 <b>${okb}개</b>가 잘 돌고 있어요. `+(td.length?`살펴볼 일이 <b>${td.length}개</b> 있어요${red?`, 그중 ${red}개는 먼저 봐 주세요`:''}.`:'오늘은 따로 챙길 일이 없어요.');
-const top=`<div class="card today"><div class="nm">오늘 살펴볼 것</div>`+(td.length?td.map(t=>`<div class="it ${t.lvl==='red'?'red':''}"><span class="lv"></span><b>${e(t.bot)}</b><span class="ms">${e(t.msg)}</span></div>`).join(''):`<div class="clear">따로 챙길 일이 없어요. 편하게 보셔도 돼요.</div>`)+`<div class="bots">${dots}</div></div>`;
-document.getElementById('root').innerHTML=top+tabs([['전략분석',analysis],['자동매매',auto]],'tabs');
-}).catch(()=>{document.getElementById('hs').textContent='데이터를 불러오지 못했어요. 허브 프로그램(start_hub.bat)이 켜져 있는지 확인해 주세요.'});
-</script></main></body></html>
+const B=Object.fromEntries(s.bots.map(b=>[b.id,b]));const A=s.analysis||{};window._picks=A.picks;
+const st=B.stock&&B.stock.age_min!=null?`<div class="nt" style="margin:8px 8px 0">주식 분석 봇 마지막 갱신 ${B.stock.age_min}분 전</div>`:'';
+const td=s.todo||[];const dc=x=>({"정상":"g","확인됨":"g","지연":"y","일시정지":"y","오래됨":"y","멈춤":"r","읽기 실패":"r"}[x]||'');
+const okb=s.bots.filter(b=>dc(b.state)==='g').length,hr=+(s.ts||'').slice(11,13);
+const hi=hr>=5&&hr<11?'좋은 아침이에요':hr>=11&&hr<17?'좋은 오후예요':hr>=17&&hr<22?'좋은 저녁이에요':'오늘도 수고했어요';
+const go=(pgk,lab)=>`<button class="more" data-go="${pgk}">${lab}</button>`;
+const tdi=t=>`<div class="it ${t.lvl==='red'?'red':''}"><span class="lv"></span><b>${e(t.bot)}</b><span class="ms">${e(t.msg)}</span></div>`;
+const todoCard=`<section class="card today"><div class="ch"><div class="nm">확인할 일 <span class="cnt">${td.length}</span></div></div>`+(td.length?td.slice(0,3).map(tdi).join('')+(td.length>3?`<div class="tdx" hidden>${td.slice(3).map(tdi).join('')}</div><button class="more" data-tdx>${td.length-3}개 더 보기</button>`:''):`<div class="clear">오늘은 챙길 일이 없어요</div>`)+`</section>`;
+const botRow=`<section class="card"><div class="ch"><div class="nm">내 봇</div>${go('bots','전체')}</div><div class="bots">${s.bots.map(b=>`<button class="tag" data-go="bots"><i class="${dc(b.state)}"></i>${e(b.name)}<span class="ts">${e(b.state)}</span></button>`).join('')}</div></section>`;
+const U=A.usscan;const mk=U&&!U.error?`<section class="card"><div class="ch"><div class="nm">미국 시장 <span class="md">${e(U.asof)} 종가</span></div>${go('stock','자세히')}</div><div class="kv">${kv('오른 종목',U.up_pct+'%')}${kv('평균 RSI',U.avg_rsi)}${kv('강한 매수',(U.grade&&U.grade['강한 매수'])+'개')}</div></section>`:'';
+const R=A.rcb;const wk=R&&R.week&&(R.week.p||[]).length?`<section class="card"><div class="ch"><div class="nm">치킨보이 최근 생각 <span class="md">${e(R.week.range)}</span></div>${go('rcb','더 보기')}</div>${(R.week.p||[]).slice(0,3).map(x=>`<div class="it">${e(typeof x==='string'?x:x.t)}</div>`).join('')}</section>`:'';
+const P=(A.picks||[]).filter(x=>x.pct!=null);const pkTop=P.length?`<section class="card"><div class="ch"><div class="nm">치킨보이 언급 종목 <span class="md">언급 후 수익률</span></div>${go('rcb:1','전체')}</div><div class="mini">${[...P].sort((a,b)=>b.pct-a.pct).slice(0,3).concat([...P].sort((a,b)=>a.pct-b.pct).slice(0,2)).map(r=>`<div class="mr"><span>${e(r.name)}</span><b class="${cl(r.pct)}">${pc(r.pct)}</b></div>`).join('')}</div></section>`:'';
+const home=`<header class="hd"><p class="hi">${hi}</p><div class="hs">${td.length?`확인할 일이 <b>${td.length}개</b> 있어요`:'오늘은 확인할 일이 없어요'}<br>봇 ${s.bots.length}개 중 ${okb}개가 잘 돌고 있어요</div></header>`+todoCard+botRow+mk+wk+pkTop+`<div class="upd">${e(s.ts)} 기준 · 5분마다 새로 고쳐져요</div>`;
+const T=(t,d)=>`<header class="pt"><h1 class="ph">${t}</h1>${d?`<div class="pd">${d}</div>`:''}</header>`;
+const stock=T('주식','미국 1,700여 종목 스캔과 한국 수급')+tabs([['미국',tabs([['시장',usmarket(A.usscan)],['추천',usrec(A.us)],['테슬라',tsla(A.tsla,B.tsla&&B.tsla.url)]],'ul')+st],['한국',tabs([['수급',krflow(A.krflow)],['종목',krstock(A.kr)]],'ul')+st]],'seg');
+const coin=T('코인','비트코인 시장과 김프 전략')+tabs([['시장',coinmarket(A.coin&&A.coin.market)],['김프',coinkimp(A.coin&&A.coin.kimp)],['전략',coinstrat(A.coin&&A.coin.strategy)],['구간',coinregime(A.coin&&A.coin.regime)+coincycle(A.coin&&A.coin.cycle)+coinmacro(A.coin&&A.coin.macro)]],'ul');
+const rc=T('치킨보이','리얼치킨보이 글을 읽고 정리했어요')+rcb(A.rcb);
+const bots=T('봇','자동매매와 분석 봇 상태')+s.bots.map(b=>{const t=b.ret_pct!=null?`<div class="kv">${kv('원금 대비',(b.ret_pct>0?'+':'')+b.ret_pct+'%')}${kv(b.id==='btc'?'매매 기록':'완료 거래',b.trades==null?'-':b.trades+'회')}${kv('포지션',e(b.position||'-'))}</div>`:'';return `<section class="card bc"><div class="row"><div><div class="nm">${e(b.name)}</div><div class="nt">${e(b.mode||'')}</div></div><span class="pill ${dc(b.state)}">${e(b.state)}</span></div><div class="hl">${e(b.headline||'')}</div>${t}${b.url?`<a class="lk" href="${e(b.url)}">현황판 열기</a>`:''}</section>`}).join('')+(td.length?`<h2>확인할 일</h2><section class="card today">${td.map(tdi).join('')}</section>`:'');
+const PG=[['home','홈',home,'<path d="M4 11l8-7 8 7v8a1 1 0 0 1-1 1h-4v-6h-6v6H5a1 1 0 0 1-1-1z"/>'],['stock','주식',stock,'<path d="M4 19V9M10 19V5M16 19v-7M22 19H2" />'],['coin','코인',coin,'<circle cx="12" cy="12" r="8"/><path d="M9.5 9h4a1.5 1.5 0 0 1 0 3h-4h4.5a1.5 1.5 0 0 1 0 3h-4.5M11 7.5v9"/>'],['rcb','치킨보이',rc,'<path d="M12 3l2.5 5.5L20 9.3l-4 4 1 5.7-5-2.8-5 2.8 1-5.7-4-4 5.5-.8z"/>'],['bots','봇',bots,'<rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 4v4M9 13h.01M15 13h.01"/>']];
+document.getElementById('root').innerHTML=PG.map(x=>`<div class="page" data-pg="${x[0]}" hidden>${x[2]}</div>`).join('');
+document.getElementById('bn').innerHTML=PG.map(x=>`<button data-go="${x[0]}" aria-label="${x[1]}"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">${x[3]}</svg><span>${x[1]}</span></button>`).join('');
+const show=k=>{const[pk,sub]=(k||'home').split(':');const ok=PG.some(x=>x[0]===pk)?pk:'home';document.querySelectorAll('.page').forEach(el=>el.hidden=el.dataset.pg!==ok);document.querySelectorAll('#bn button').forEach(b=>b.classList.toggle('on',b.dataset.go===ok));if(sub!=null){const pgEl=document.querySelector(`.page[data-pg="${ok}"]`);const bt=pgEl.querySelectorAll('.ul button')[+sub];if(bt)bt.click();}try{history.replaceState(null,'','#'+ok)}catch(_){}window.scrollTo(0,0);};
+document.addEventListener('click',ev=>{const g=ev.target.closest('[data-go]');if(g){show(g.dataset.go);return;}const x=ev.target.closest('[data-tdx]');if(x){const h=x.previousElementSibling;h.hidden=!h.hidden;x.textContent=h.hidden?x.dataset.l:'접기';}});
+document.querySelectorAll('[data-tdx]').forEach(b=>b.dataset.l=b.textContent);
+show(location.hash.slice(1));
+}).catch(()=>{document.getElementById('root').innerHTML='<div class="hd"><p class="hi">데이터를 못 불러왔어요</p><div class="hs">PC에서 허브 프로그램(start_hub.bat)이 켜져 있는지 확인해 주세요</div></div>'});
+</script></main><nav class="bn" id="bn" aria-label="메뉴"></nav></body></html>
