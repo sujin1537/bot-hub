@@ -18,7 +18,12 @@ a.card{display:block;color:inherit;text-decoration:none}.tag{display:inline-bloc
 .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}.two .card{margin:0}.li{display:flex;justify-content:space-between;gap:6px;font-size:13px;padding:3px 0}.li span:last-child{font-weight:650;white-space:nowrap}
 .upc{color:var(--up)}.dnc{color:var(--dn)}table.fl{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:6px}table.fl th,table.fl td{padding:4px 2px;text-align:right}table.fl th:first-child,table.fl td:first-child{text-align:left}table.fl th{color:var(--mut);font-weight:600}table.fl tr.sum td{border-top:1px solid var(--ln);font-weight:650}
 .lcw{position:relative}.lct{position:absolute;display:none;pointer-events:none;background:var(--card);border:1px solid var(--ln);border-radius:8px;padding:6px 9px;font-size:12px;line-height:1.5;box-shadow:0 4px 14px #0002;white-space:nowrap;z-index:5}.lcg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--mut);margin:2px 0 6px}.lcg i{display:inline-block;width:14px;height:3px;border-radius:2px;vertical-align:middle;margin-right:5px}.bar{display:flex;height:10px;border-radius:5px;overflow:hidden;margin:6px 0}.bar i{display:block}
-</style></head><body><main><h1>투자 허브</h1><div class="upd" id="u">불러오는 중…</div><div id="root"></div>
+.rcx{cursor:pointer}.rci{color:var(--ac);font-size:12px;font-weight:650;white-space:nowrap}
+#rcm{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:flex-end;justify-content:center;z-index:50;padding:16px}#rcm[hidden]{display:none}
+#rcm .rcw{background:var(--card);color:var(--tx);border:1px solid var(--ln);border-radius:14px;max-width:560px;width:100%;max-height:80vh;overflow:auto;padding:14px 16px}
+#rcm .rcc{float:right;border:0;background:none;color:var(--mut);font-size:20px;cursor:pointer;line-height:1}
+@media(min-width:700px){#rcm{align-items:center}}
+</style></head><body><main><div id="rcm" hidden><div class="rcw"><button class="rcc" aria-label="닫기">×</button><div class="rcb"></div></div></div><h1>투자 허브</h1><div class="upd" id="u">불러오는 중…</div><div id="root"></div>
 <script>
 const rp=location.hostname.split('.')[0]+'/'+location.pathname.split('/')[1];
 const I={"정상":"🟢","확인됨":"🟢","지연":"🟡","멈춤":"🔴","일시정지":"⏸","미가동":"⚪","오래됨":"🟡","읽기 실패":"🔴"};
@@ -28,6 +33,9 @@ function tabs(items,cls){const g='g'+(gid++);return `<div class="${cls}">`+items
 document.addEventListener('click',ev=>{const b=ev.target.closest('button[data-g]');if(!b)return;const g=b.dataset.g,i=b.dataset.i;
 document.querySelectorAll(`[data-g="${g}"]`).forEach(el=>{if(el.tagName==='BUTTON')el.className=el.dataset.i===i?'on':'';else el.hidden=el.dataset.i!==i;});
 try{history.replaceState(null,'','#'+(window._p=(window._p||{}),window._p[g]=i,Object.values(window._p).join('')))}catch(_){}});
+document.addEventListener('click',ev=>{const t=ev.target.closest('[data-rc]');const m=document.getElementById('rcm');
+if(t){const x=window._rc[+t.dataset.rc];m.querySelector('.rcb').innerHTML=`<div class="nm" style="margin-bottom:6px">${e(x.t)}</div>`+(x.why||[]).map(w=>`<div class="it">• ${e(w)}</div>`).join('')+((x.src||[]).length?`<div class="nm" style="margin:12px 0 4px">근거 글 <span class="md">구독자 로그인 필요</span></div>`+x.src.map(s=>`<a class="it" style="display:block;color:var(--ac);text-decoration:none" href="${e(s.u)}" target="_blank" rel="noopener">${e(s.d)} · ${e(s.t)} ↗</a>`).join(''):'');m.hidden=false;return;}
+if(m&&!m.hidden&&(ev.target===m||ev.target.closest('.rcc')))m.hidden=true;});
 const card=b=>`<${b.url?'a href="'+e(b.url)+'"':'div'} class="card"><div class="row"><div><span class="nm">${e(b.name)}</span><span class="md">${e(b.mode||'')}</span></div><div class="st">${I[b.state]||'⚪'} ${e(b.state)}</div></div><div class="hl">${e(b.headline||'')}${b.url?' · 자세히 ›':''}</div></${b.url?'a':'div'}>`;
 const kv=(k,v)=>`<div>${k}<b>${v==null?'-':v}</b></div>`;
 const pc=v=>(v>0?'+':'')+v+'%';const cl=v=>v>0?'upc':v<0?'dnc':'';
@@ -160,8 +168,8 @@ function krstock(a){if(!a||a.error)return '<div class="card nt">자료 없음</d
 return `<div class="card"><div class="nm">관심 종목 등급</div>${a.rating.map(x=>`<div class="it"><span class="sym">${e(x.name||x.sym)}</span><span class="px">${e(x.sym)}</span> <span>${e(x.label)}</span></div>`).join('')}</div>`+
 (a.reentry.length?`<div class="card"><div class="nm">재진입 조건</div>${a.reentry.map(x=>`<div class="it"><span class="sym">${e(x.name||x.sym)}</span> <span>${x.on?'🟢 충족':'⚪ 미충족'}</span><div class="nt">${e(x.detail)}</div></div>`).join('')}</div>`:'');}
 function rcb(r){if(!r||r.error)return '<div class="card nt">자료 없음</div>';
-const L=a=>(a||[]).map(x=>`<div class="it">• ${e(x)}</div>`).join('');
-const sum=`<div class="card"><div class="nm">한눈에 <span class="md">${e(r.asof)} 기준</span></div>${(r.oneline||[]).map((x,i)=>`<div class="it">${i+1}. ${e(x)}</div>`).join('')}</div>`+
+window._rc=[];const L=a=>(a||[]).map(x=>{if(typeof x==='string')return `<div class="it">• ${e(x)}</div>`;const i=window._rc.push(x)-1;return `<div class="it rcx" data-rc="${i}">• ${e(x.t)} <span class="rci">근거 ›</span></div>`}).join('');
+const sum=`<div class="card"><div class="nm">한눈에 <span class="md">${e(r.asof)} 기준</span></div>${L(r.oneline)}</div>`+
 (r.week?`<div class="card"><div class="nm">최근 요약 <span class="md">${e(r.week.range)}</span></div>${L(r.week.p)}</div>`:'');
 const mon=(r.months||[]).map(m=>`<div class="card"><div class="nm">${e(m.m)} <span class="md">${e(m.t)}</span></div>${L(m.p)}</div>`).join('');
 const dir=`<div class="card"><div class="nm">중장기 방향</div>${L(r.direction)}</div><div class="card"><div class="nm">체크 지표</div>${L(r.watch)}</div>`+
