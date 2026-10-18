@@ -162,7 +162,7 @@ return `<div class="card"><div class="nm">관심 종목 등급</div>${a.rating.m
 function rcb(r){if(!r||r.error)return '<div class="card nt">자료 없음</div>';
 const L=a=>(a||[]).map(x=>`<div class="it">• ${e(x)}</div>`).join('');
 const sum=`<div class="card"><div class="nm">한눈에 <span class="md">${e(r.asof)} 기준</span></div>${(r.oneline||[]).map((x,i)=>`<div class="it">${i+1}. ${e(x)}</div>`).join('')}</div>`+
-(r.week?`<div class="card"><div class="nm">이번 주 <span class="md">${e(r.week.range)}</span></div>${L(r.week.p)}</div>`:'');
+(r.week?`<div class="card"><div class="nm">최근 요약 <span class="md">${e(r.week.range)}</span></div>${L(r.week.p)}</div>`:'');
 const mon=(r.months||[]).map(m=>`<div class="card"><div class="nm">${e(m.m)} <span class="md">${e(m.t)}</span></div>${L(m.p)}</div>`).join('');
 const dir=`<div class="card"><div class="nm">중장기 방향</div>${L(r.direction)}</div><div class="card"><div class="nm">체크 지표</div>${L(r.watch)}</div>`+
 `<div class="card"><div class="nm">적중 / 빗나감</div>${(r.hits||[]).map(x=>`<div class="it">✅ ${e(x)}</div>`).join('')}${(r.misses||[]).map(x=>`<div class="it">❌ ${e(x)}</div>`).join('')}<div class="nt">${e(r.src||'')}</div></div>`;
