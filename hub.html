@@ -159,11 +159,19 @@ return Object.keys(a).map(k=>tb(k,a[k])).join('');}
 function krstock(a){if(!a||a.error)return '<div class="card nt">자료 없음</div>';
 return `<div class="card"><div class="nm">관심 종목 등급</div>${a.rating.map(x=>`<div class="it"><span class="sym">${e(x.name||x.sym)}</span><span class="px">${e(x.sym)}</span> <span>${e(x.label)}</span></div>`).join('')}</div>`+
 (a.reentry.length?`<div class="card"><div class="nm">재진입 조건</div>${a.reentry.map(x=>`<div class="it"><span class="sym">${e(x.name||x.sym)}</span> <span>${x.on?'🟢 충족':'⚪ 미충족'}</span><div class="nt">${e(x.detail)}</div></div>`).join('')}</div>`:'');}
+function rcb(r){if(!r||r.error)return '<div class="card nt">자료 없음</div>';
+const L=a=>(a||[]).map(x=>`<div class="it">• ${e(x)}</div>`).join('');
+const sum=`<div class="card"><div class="nm">한눈에 <span class="md">${e(r.asof)} 기준</span></div>${(r.oneline||[]).map((x,i)=>`<div class="it">${i+1}. ${e(x)}</div>`).join('')}</div>`+
+(r.week?`<div class="card"><div class="nm">이번 주 <span class="md">${e(r.week.range)}</span></div>${L(r.week.p)}</div>`:'');
+const mon=(r.months||[]).map(m=>`<div class="card"><div class="nm">${e(m.m)} <span class="md">${e(m.t)}</span></div>${L(m.p)}</div>`).join('');
+const dir=`<div class="card"><div class="nm">중장기 방향</div>${L(r.direction)}</div><div class="card"><div class="nm">체크 지표</div>${L(r.watch)}</div>`+
+`<div class="card"><div class="nm">적중 / 빗나감</div>${(r.hits||[]).map(x=>`<div class="it">✅ ${e(x)}</div>`).join('')}${(r.misses||[]).map(x=>`<div class="it">❌ ${e(x)}</div>`).join('')}<div class="nt">${e(r.src||'')}</div></div>`;
+return tabs([['요약',sum],['월별',mon],['방향',dir]],'ul');}
 fetch('https://raw.githubusercontent.com/'+rp+'/data/hub.json?_='+Date.now(),{cache:'no-store'}).then(r=>r.json()).then(s=>{
 document.getElementById('u').textContent='갱신 '+s.ts+' (KST) · 금액·수량·보유 종목은 공개하지 않음';
 const B=Object.fromEntries(s.bots.map(b=>[b.id,b]));const A=s.analysis||{};
 const st=B.stock&&B.stock.age_min!=null?`<div class="nt" style="margin-top:6px">주식 분석 봇 마지막 갱신 ${B.stock.age_min}분 전</div>`:'';
-const analysis=tabs([['🇺🇸 미국',tabs([['시장',usmarket(A.usscan)],['추천',usrec(A.us)],['테슬라',tsla(A.tsla,B.tsla&&B.tsla.url)]],'ul')+st],['🇰🇷 한국',tabs([['수급',krflow(A.krflow)],['종목',krstock(A.kr)]],'ul')+st],['🪙 코인',tabs([['시장',coinmarket(A.coin&&A.coin.market)],['김프',coinkimp(A.coin&&A.coin.kimp)],['전략',coinstrat(A.coin&&A.coin.strategy)],['구간',coinregime(A.coin&&A.coin.regime)+coincycle(A.coin&&A.coin.cycle)+coinmacro(A.coin&&A.coin.macro)]],'ul')]],'sub');
+const analysis=tabs([['🇺🇸 미국',tabs([['시장',usmarket(A.usscan)],['추천',usrec(A.us)],['테슬라',tsla(A.tsla,B.tsla&&B.tsla.url)]],'ul')+st],['🇰🇷 한국',tabs([['수급',krflow(A.krflow)],['종목',krstock(A.kr)]],'ul')+st],['🪙 코인',tabs([['시장',coinmarket(A.coin&&A.coin.market)],['김프',coinkimp(A.coin&&A.coin.kimp)],['전략',coinstrat(A.coin&&A.coin.strategy)],['구간',coinregime(A.coin&&A.coin.regime)+coincycle(A.coin&&A.coin.cycle)+coinmacro(A.coin&&A.coin.macro)]],'ul')],['🐔 치킨보이',rcb(A.rcb)]],'sub');
 const auto=['kimp','btc'].filter(k=>B[k]).map(k=>{const b=B[k];const t=b.ret_pct!=null?`<div class="kv" style="margin:-4px 0 10px">${kv('원금 대비',(b.ret_pct>0?'+':'')+b.ret_pct+'%')}${kv(k==='btc'?'매매 기록':'완료 거래',b.trades==null?'-':b.trades+'회')}${kv('포지션',e(b.position||'-'))}</div>`:'';return card(b)+t}).join('');
 const td=s.todo||[];const dots=s.bots.map(b=>`<span class="tag">${I[b.state]||'⚪'} ${e(b.name)}</span>`).join('');
 const top=`<div class="card"><div class="nm">오늘 확인할 것</div>`+(td.length?td.map(t=>`<div class="it">${t.lvl==='red'?'🔴':'🟡'} <b>${e(t.bot)}</b> ${e(t.msg)}</div>`).join(''):`<div class="hl" style="font-size:14px;color:var(--tx)">✅ 확인할 것이 없어요</div>`)+`<div style="margin-top:8px">${dots}</div></div>`;
