@@ -344,18 +344,25 @@ else h+=`<div class="nt" style="margin-top:14px">주간 간접 신호는 매주 
 return h;}
 function floorc(S){if(!S||!S.wvf)return '';const P=S.wvf,O=S.oilwin,L=S.lv||{};const px=P.px,ma=P.ma20;
 const ep=L.wvf_ep;const turned=!!((ep&&ep.turned)||(P.peak&&P.peak[1]>=20&&P.v<=P.peak[1]*0.75));
-let oil='구간 없음',oilOk=false;if(O&&O.start){const td=new Date(),st=new Date(O.start),en=new Date(O.end);oilOk=td>=st&&td<=en;oil=td<st?`${O.start.slice(5).replace('-','/')}부터 · D-${Math.ceil((st-td)/864e5)}`:td<=en?`진행 중 ~${O.end.slice(5).replace('-','/')}`:'종료';}
-const C=[[px>ma,'20일선 회복',`${((px/ma-1)*100).toFixed(1)}% · ${Math.round(ma).toLocaleString()}`],[!!L.frn_on,'외국인 3일 순매수',L.frn_on?'켜짐':'아직'],[turned,'패닉 꺾임',`${P.v} / 최고 ${P.peak?P.peak[1]:'-'}`],[oilOk,'유가 선행 구간',oil]];
-const n=C.filter(x=>x[0]).length;const msg=n>=3?'반등 신뢰도 높음':n>=2?'반등 시도 중':'바닥 확인 전 · 버티기';const pc2=n>=3?'var(--ok)':n>=2?'var(--note)':'var(--mut)';
+let oil='감시 구간 없음',oilOk=false;if(O&&O.start){const td=new Date(),st=new Date(O.start),en=new Date(O.end);oilOk=td>=st&&td<=en;oil=td<st?`${O.start.slice(5).replace('-','/')}부터 시작 (D-${Math.ceil((st-td)/864e5)})`:td<=en?`진행 중 (~${O.end.slice(5).replace('-','/')})`:'끝남';}
+const gap=(px/ma-1)*100;
+const C=[[px>ma,'코스피 20일 평균선 위로 마감',px>ma?`회복 (${Math.round(ma).toLocaleString()} 위)`:`아직 · ${Math.round(ma).toLocaleString()}까지 +${(-gap).toFixed(1)}%`],
+[!!L.frn_on,'외국인이 3일 연속 순매수',L.frn_on?'충족':'아직 · 계속 팔고 있음'],
+[turned,'패닉 지표 꺾임 (최고점 대비 −25%)',turned?'충족':`아직 · 지금 ${P.v} / 최고 ${P.peak?P.peak[1]:'-'}`],
+[oilOk,'유가 선행 구간 (유가 고점 6~10주 뒤)',oil]];
+const n=C.filter(x=>x[0]).length;
+const act=n>=3?['🟢 반등 신호 확실 — 상환 준비','6,330 오면 레버리지 일부 팔아 마통 일부 상환, 6,860이면 대부분 상환']:n>=2?['🟡 반등 시도 중 — 지켜보기','하나만 더 켜지면 반등 신호. 아직 추가 매수는 하지 않기']:['⚪ 아직 바닥 확인 전 — 버티기','지금은 할 일 없음: 바닥에서 던지지 않기 · 마통 추가로 사지 않기'];
 const lo=4850,hi=6860,pos=v=>Math.max(0,Math.min(100,(v-lo)/(hi-lo)*100));
 const bar=`<div class="lvbar"><i style="left:${pos(4850)}%"></i><em class="l0" style="left:${pos(4850)}%">⛔ 4,850</em><u class="l0" style="left:${pos(4850)}%">지지선</u><i style="left:${pos(6330)}%"></i><em style="left:${pos(6330)}%">6,330</em><u class="l1" style="left:${pos(6330)}%;margin-left:-6px">상환 1차</u><i style="left:${pos(6860)}%"></i><em class="l1" style="left:${pos(6860)}%">6,860</em><u class="l1" style="left:${pos(6860)}%">2차</u><i class="now" style="left:${pos(px)}%"></i></div>`;
-return `<section class="card"><div class="ch"><div class="nm">🎯 바닥 판단</div><span class="pill2" style="color:${pc2}">${n}/4 · ${msg}</span></div>
-<div class="nt" style="margin-top:4px">코스피 <b style="color:var(--tx)">${px.toLocaleString()}</b> <span class="${cl(P.d1)}">${pc(P.d1)}</span> · ${e(P.asof)} · 6,330까지 +${((6330/px-1)*100).toFixed(0)}%</div>
-<div class="ckg">${C.map(x=>`<div class="${x[0]?'on':''}">${x[0]?'✅':'⬜'} ${x[1]}<b>${x[2]}</b></div>`).join('')}</div>${bar}</section>`;}
+return `<section class="card"><div class="ch"><div class="nm">🎯 지금 할 일</div><span class="md">코스피 ${px.toLocaleString()} <span class="${cl(P.d1)}">${pc(P.d1)}</span></span></div>
+<div class="hl" style="margin-top:8px"><b style="font-size:17px">${act[0]}</b><div style="margin-top:4px">${act[1]}</div></div>
+<div class="nm" style="margin:16px 0 2px;font-size:14px">반등 확인 조건 <span class="md">4개 중 2개 이상 켜지면 반등 신호 · 지금 ${n}개</span></div>
+<div>${C.map(x=>`<div style="display:flex;gap:10px;padding:9px 0;border-top:1px solid var(--ln)"><span style="font-size:15px">${x[0]?'🟢':'⚫'}</span><div><div style="font-size:15px">${x[1]}</div><div style="font-size:13px;margin-top:2px;color:${x[0]?'var(--ok)':'var(--mut)'}">${x[2]}</div></div></div>`).join('')}</div>
+<div class="nm" style="margin:16px 0 0;font-size:14px">코스피 기준선 <span class="md">● 지금 위치 · 6,330까지 +${((6330/px-1)*100).toFixed(0)}%</span></div>${bar}</section>`;}
 function semic(D){if(!D||!(D.items||[]).length)return '';const f=v=>v==null?'<span class="md">-</span>':`<span class="${v>0?'upc':v<0?'dnc':''}">${v>0?'+':''}${v.toLocaleString()}</span>`;
 const s3=(r,k)=>{const a=r.slice(0,3).map(x=>x[k]).filter(v=>v!=null);return a.length?a.reduce((x,y)=>x+y,0):null};
 const mini=`<table class="sft"><tr><th></th><th>등락</th><th>외국인</th><th>기관</th><th>개인</th><th>%R</th></tr>`+D.items.map(it=>{const r=it.rows||[];const w=wrs(it.wr);return `<tr><td><b>${e(it.n.replace('SK',''))}</b></td><td class="${cl(it.chg)}">${it.chg==null?'':pc(it.chg)}</td><td>${f(s3(r,'f'))}</td><td>${f(s3(r,'i'))}</td><td>${f(s3(r,'p'))}</td><td style="color:${w[1]}">${it.wr==null?'-':Math.round(it.wr)}</td></tr>`}).join('')+`</table><div class="nt" style="margin-top:6px">순매수는 최근 3거래일 합계(억 원, KRX+넥스트레이드) · %R은 14일 윌리엄스 %R (-80↓ 과매도 · -20↑ 과매수)</div>`;
-const full=D.items.map(it=>{const r=it.rows||[];return `<div class="nm" style="margin:14px 0 0;font-size:15px">${e(it.n)} <span class="md">${it.px?Math.round(it.px).toLocaleString()+'원':''}</span></div><table class="sft"><tr><th></th><th>외국인</th><th>기관</th><th>개인</th></tr>`+r.slice(0,5).map(x=>`<tr><td>${e(x.d)}</td><td>${f(x.f)}</td><td>${f(x.i)}</td><td>${f(x.p)}</td></tr>`).join('')+`</table>`}).join('')+`<div class="nt" style="margin-top:8px">'-'는 아직 집계 전</div>`;
+const full=D.items.map(it=>{const r=it.rows||[];return `<div class="nm" style="margin:14px 0 0;font-size:15px">${e(it.n)} <span class="md">${it.px?Math.round(it.px).toLocaleString()+'원':''}</span></div><table class="sft"><tr><th></th><th>외국인</th><th>기관</th><th>개인</th></tr>`+r.slice(0,5).reverse().map(x=>`<tr><td>${e(x.d)}</td><td>${f(x.f)}</td><td>${f(x.i)}</td><td>${f(x.p)}</td></tr>`).join('')+`</table>`}).join('')+`<div class="nt" style="margin-top:8px">아래로 갈수록 최근 · '-'는 아직 집계 전</div>`;
 return `<section class="card"><div class="ch"><div class="nm">💾 반도체 수급 <span class="md">${e(D.asof)}</span></div><button class="more" data-sigx>날짜별</button></div><div class="sg1">${mini}</div><div class="sg2" hidden>${full}</div></section>`;}
 function wealth(w){if(!w)return '<div class="card nt">자료 없음</div>';window._rc=window._rc||[];
 const it=(x,b='•')=>{const i=window._rc.push(x)-1;return `<div class="it rcx" data-rc="${i}" tabindex="0">${b} ${e(x.t)} <span class="rci">근거 ›</span></div>`;};
